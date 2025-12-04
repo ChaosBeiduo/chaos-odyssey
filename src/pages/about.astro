@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
 
 const pageTitle = "About Me";
 
@@ -44,5 +45,6 @@ const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript",
 	<ul>
 		{skills.map((skill) => <li>{skill}</li>)}
 	</ul>
+	<Footer/>
 	</body>
 </html>
