@@ -1,9 +1,5 @@
 ---
-import '../styles/global.css';
-import Navigation from "../components/Navigation.astro";
-import Footer from "../components/Footer.astro";
-
-const pageTitle = "About Me";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 const identity = {
 	firstName: "Bunn",
@@ -15,18 +11,7 @@ const identity = {
 const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript", "Python", "GoLang"];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{pageTitle}</title>
-	</head>
-	<body>
-	<Navigation />
-
-	<h1>{pageTitle}</h1>
+<BaseLayout pageTitle={'About Me'}>
 	<h2>... and my new Astro site!</h2>
 
 	<p>I am working through Astro's introductory tutorial. This is the second page on my website, and it's the first one I built myself!</p>
@@ -45,6 +30,5 @@ const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript",
 	<ul>
 		{skills.map((skill) => <li>{skill}</li>)}
 	</ul>
-	<Footer/>
-	</body>
-</html>
+</BaseLayout>
+
