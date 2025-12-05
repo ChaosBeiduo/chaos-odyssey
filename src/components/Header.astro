@@ -1,11 +1,20 @@
 ---
+const currentPath = Astro.url.pathname;
+
+const isActive = (href: string) => {
+    if (currentPath === href) {
+        return 'active';
+    }
+
+    return '';
+};
 ---
 <header class="chaos-header">
     <nav class="chaos-nav">
-        <a class="chaos-nav-logo" href="/about/">
+        <a class={`chaos-nav-logo ${isActive('/about/')}`} href="/about/">
             <img src="/public/favicon.png" alt="logo" />
         </a>
-        <a href="/">[B] BLOG</a>
+        <a class={isActive('/')} href="/">[B] BLOG</a>
         <a href="https://www.linkedin.com/in/ibunnchou/">[L] LINKEDIN</a>
         <a href="https://github.com/ChaosBeiduo">[G] GITHUB</a>
     </nav>
@@ -36,7 +45,7 @@
 
         backdrop-filter: blur(10px);
 
-        &:hover{
+        &.active, &:hover{
           color: #e8e8e8;
           background: rgba(0, 0, 0, 0.8);
         }
