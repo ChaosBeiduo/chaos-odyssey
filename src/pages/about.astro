@@ -2,33 +2,35 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const identity = {
-	firstName: "Bunn",
-	country: "Shanghai",
+	country: "China",
 	occupation: "Software Engineer",
-	hobbies: ["Gaming", "Movies", "Stargazing"],
+	hobbies: ["Gaming", "Movies", "Stargazing🔭"],
 };
 
 const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript", "Python", "GoLang"];
 ---
+<style lang="scss">
+	.chaos-about{
+		grid-column: 1 / 25;
+		padding-top: 36px;
+	}
+</style>
 
 <BaseLayout pageTitle={'About Me'}>
-	<h2>... and my new Astro site!</h2>
+	<div class="chaos-about">
+		<h2>Hi there! I'm Beiduo.👾</h2>
 
-	<p>I am working through Astro's introductory tutorial. This is the second page on my website, and it's the first one I built myself!</p>
-
-	<p>This site will update as I complete more of the tutorial, so keep checking back and see how my journey is going!</p>
-
-	<p>Here are a few facts about me:</p>
-	<ul>
-		<li>My name is {identity.firstName}.</li>
-		<li>I live in {identity.country} and I work as a {identity.occupation}.</li>
-		{identity.hobbies.length >= 2 &&
-			<li>My hobbies are: {identity.hobbies[0]}, {identity.hobbies[1]}  and {identity.hobbies[2]}.</li>
-		}
-	</ul>
-	<p>My skills are:</p>
-	<ul>
-		{skills.map((skill) => <li>{skill}</li>)}
-	</ul>
+		<p>Here are a few facts about me:</p>
+		<ul>
+			<li>I live in {identity.country} and work as a {identity.occupation}.</li>
+			{identity.hobbies.length >= 2 &&
+				<li>My hobbies are: {identity.hobbies[0]}, {identity.hobbies[1]}  and {identity.hobbies[2]}.</li>
+			}
+		</ul>
+		<p>My skills are:</p>
+		<ul>
+			{skills.map((skill) => <li>{skill}</li>)}
+		</ul>
+	</div>
 </BaseLayout>
 
