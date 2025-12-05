@@ -1,7 +1,74 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
----
+import BlogPost from "../components/BlogPost.astro";
 
-<BaseLayout pageTitle={'Home'}>
-	<h2>My awesome blog subtitle</h2>
+const allPosts = Object.values(import.meta.glob('./posts/*.md', { eager: true }));
+---
+<BaseLayout pageTitle={'Blog'}>
+	<style lang="scss">
+		.chaos-container{
+			display: grid;
+			grid-template-columns: subgrid;
+			grid-column: 1/-1;
+
+			padding-top: 36px;
+		}
+		.chaos-sidebar{
+			display: grid;
+			grid-template-columns: subgrid;
+			grid-column: 1 / 6;
+
+			&-title{
+				grid-column: 1 / 14;
+			}
+		}
+
+		.chaos-blog{
+			display: grid;
+			grid-template-columns: subgrid;
+			grid-column: 6 / 25;
+			grid-row: 2 / 4;
+
+			&-header{
+				display: grid;
+				grid-template-columns: subgrid;
+				grid-column: 1/-1;
+
+				border-bottom: 1px dashed lightgray;
+
+				&-label{
+					display: flex;
+					gap: 3px;
+
+					&-date{
+						grid-column: 1/4;
+					}
+
+					&-name{
+						grid-column: 4/20;
+					}
+				}
+			}
+		}
+	</style>
+
+	<div class="chaos-container">
+		<aside class="chaos-sidebar">
+			<h1 class="chaos-sidebar-title">Blog</h1>
+		</aside>
+		<main class="chaos-blog">
+			<div class="chaos-blog-header">
+				<div class="chaos-blog-header-label chaos-blog-header-label-date">
+					<span>/</span>
+					DATE
+				</div>
+				<div class="chaos-blog-header-label chaos-blog-header-label-name">
+					<span>/</span>
+					NAME
+				</div>
+			</div>
+
+			{allPosts.map((post: any) => <BlogPost post={post} />)}
+		</main>
+	</div>
 </BaseLayout>

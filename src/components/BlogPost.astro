@@ -1,0 +1,41 @@
+---
+const {post} = Astro.props;
+const frontmatter = post.frontmatter;
+---
+
+<style lang="scss">
+    .chaos-blog-post {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1/-1;
+      align-items: center;
+
+      padding: 6px 0;
+
+      &-visible{
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-column: 1/-1;
+      }
+
+      &-date{
+        grid-column: 1/4;
+
+        white-space: nowrap;
+      }
+
+      &-title{
+        grid-column: 4/20;
+
+        &:hover{
+          text-decoration: underline;
+        }
+      }
+    }
+
+</style>
+
+<div class="chaos-blog-post">
+    <span class="chaos-blog-post-date">{frontmatter.pubDate.toString().slice(0,10)}</span>
+    <a class="chaos-blog-post-title" href={post.url}>{frontmatter.title}</a>
+</div>
