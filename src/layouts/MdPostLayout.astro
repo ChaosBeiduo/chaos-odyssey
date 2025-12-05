@@ -2,11 +2,23 @@
 import BaseLayout from "./BaseLayout.astro";
 const { frontmatter } = Astro.props;
 ---
+
+<style lang="scss">
+    .chaos-post{
+      grid-column: 1/-1;
+
+      padding-top: 36px;
+    }
+</style>
+
 <BaseLayout pageTitle={frontmatter.title}>
-    <p>Written by {frontmatter.author}</p>
-    <p>Published on: {frontmatter.pubDate.toString().slice(0,10)}</p>
-    <p><em>{frontmatter.description}</em></p>
-    <p>Written by: {frontmatter.author}</p>
-    <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
-    <slot />
+    <div class="chaos-post">
+        <p>Written by {frontmatter.author}</p>
+        <p>Published on: {frontmatter.pubDate.toString().slice(0,10)}</p>
+        <p><em>{frontmatter.description}</em></p>
+        <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
+        <div class="chaos-markdown">
+            <slot />
+        </div>
+    </div>
 </BaseLayout>
