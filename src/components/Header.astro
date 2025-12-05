@@ -1,9 +1,56 @@
 ---
 ---
-<nav class="nav-links">
+<header class="chaos-header">
+    <nav class="chaos-nav">
+        <a class="chaos-nav-logo" href="/about/">
+            <img src="/public/favicon.png" alt="logo" />
+        </a>
+        <a href="/">[B] BLOG</a>
+        <a href="https://www.linkedin.com/in/ibunnchou/">[L] LINKEDIN</a>
+        <a href="https://github.com/ChaosBeiduo">[G] GITHUB</a>
+    </nav>
+</header>
 
-<a href="/">Home</a>
-<a href="/about/">About</a>
-<a href="/blog/">Blog</a>
 
-</nav>
+<style lang="scss">
+    .chaos-header {
+      position: fixed;
+      top: 0;
+
+      padding: 12px 0;
+    }
+
+    .chaos-nav {
+      display: flex;
+      gap: 3px;
+
+      a{
+        display: flex;
+        align-items: center;
+
+        padding: 6px 12px;
+
+        border-radius: 3px;
+        background: #1e1e1e11;
+        line-height: 1;
+
+        backdrop-filter: blur(10px);
+
+        &:hover{
+          color: #e8e8e8;
+          background: rgba(0, 0, 0, 0.8);
+        }
+
+        &.chaos-nav-logo{
+          padding: 3px 6px;
+
+          img{
+            width: 18px;
+            border-radius: 3px;
+          }
+        }
+      }
+
+
+    }
+</style>
