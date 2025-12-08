@@ -8,15 +8,46 @@ const { frontmatter } = Astro.props;
       grid-column: 1/-1;
 
       padding-top: 36px;
+
+      img{
+        display: block;
+        margin: 0 auto;
+
+        border-radius: 6px;
+      }
+
+      &-desc{
+        margin-bottom: 12px;
+
+        padding: 6px 24px;
+
+        border-radius: 6px;
+        background: ghostwhite;
+
+        font-style: italic;
+
+        em{
+          font-size: 1.2rem;
+        }
+
+        p{
+          text-indent: 2rem;
+        }
+      }
     }
 </style>
 
 <BaseLayout pageTitle={frontmatter.title}>
     <div class="chaos-post">
-        <p>Written by {frontmatter.author}</p>
         <p>Published on: {frontmatter.pubDate.toString().slice(0,10)}</p>
-        <p><em>{frontmatter.description}</em></p>
+
+        <div class="chaos-post-desc">
+            <em>Me: </em>
+            <p>{frontmatter.description}</p>
+        </div>
+
         <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
+
         <div class="chaos-markdown">
             <slot />
         </div>
