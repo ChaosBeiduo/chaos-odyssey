@@ -11,12 +11,10 @@ const isActive = (href: string) => {
 ---
 <header class="chaos-header">
     <nav class="chaos-nav">
-        <a class={`chaos-nav-logo ${isActive('/about/')}`} href="/about/">
-            <img src="/favicon.png" alt="logo" />
-        </a>
+        <a class={isActive('/about/')} href="/about/">[A] ABOUT ME</a>
         <a class={isActive('/')} href="/">[B] BLOG</a>
-        <a href="https://www.linkedin.com/in/ibunnchou/">[L] LINKEDIN</a>
-        <a href="https://github.com/ChaosBeiduo">[G] GITHUB</a>
+        <a href="https://www.linkedin.com/in/ibunnchou/" target="_blank">[L] LINKEDIN</a>
+        <a href="https://github.com/ChaosBeiduo" target="_blank">[G] GITHUB</a>
     </nav>
 </header>
 
@@ -50,13 +48,8 @@ const isActive = (href: string) => {
           background: rgba(0, 0, 0, 0.8);
         }
 
-        &.chaos-nav-logo{
-          padding: 3px 6px;
-
-          img{
-            width: 18px;
-            border-radius: 3px;
-          }
+        &:hover{
+          opacity: 0.8;
         }
       }
 
