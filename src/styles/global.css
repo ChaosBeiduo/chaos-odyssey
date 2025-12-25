@@ -22,6 +22,12 @@ body {
     font-family: "Courier Prime", monospace;
 }
 
+@media (max-width: 768px) {
+    body{
+        max-width: unset;
+    }
+}
+
 * {
     box-sizing: border-box;
 }
