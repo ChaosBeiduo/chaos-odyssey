@@ -48,10 +48,14 @@ a{
 }
 
 .chaos-markdown{
-    color: #555;
     a{
         color: #555;
         font-style: italic;
         border-bottom: 1px solid #999;
+    }
+
+    h1{
+        font-size: 1.8rem;
+        font-family: Arial;
     }
 }

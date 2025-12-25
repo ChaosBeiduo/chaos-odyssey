@@ -1,13 +1,13 @@
 ---
 layout: ../../layouts/MdPostLayout.astro
-title: "[Google Hackathon 2024] Frontend Plugin Developing: Miss Minutes"
+title: "Building Miss Minutes: My Google Hackathon Journey"
 author: ChaosBeiduo
 description: "One month ago, I participated in my first-ever Hackathon organized by SegmentFault and Google. The theme was Innovate for the Future and the competition spanned a considerable amount of time, allowing for deep exploration and development."
 image:
     url: "https://images.immediate.co.uk/production/volatile/sites/3/2021/06/loki_miss_minutes_tara_strong-36e03f0.jpg?quality=90&resize=620,414"
     alt: "Miss Minutes"
-pubDate: 2024-08-18
-tags: ["Google", "Hackathon"]
+pubDate: 2024.08.18
+tags: ["Google", "Hackathon", "Chrome Plugin"]
 ---
 # Introduction
 One month ago, I participated in my first-ever Hackathon organized by SegmentFault and Google. The theme was [Innovate for the Future](https://pages.segmentfault.com/google-hackathon-2024-2) and the competition spanned a considerable amount of time, allowing for deep exploration and development.
@@ -18,7 +18,7 @@ At first, I had no idea how to find teammates for the Hackathon. After signing u
 The first task he assigned to me was to refactor a website I had previously built, but this time using Next.js. This was a significant step up for me, as I had some experience with web development but hadn’t yet worked with those frontend frameworks like React. The challenge was both exciting and daunting, as it required me to quickly learn and adapt to a new framework.
 
 # Our Journey Begin!
-“Do you know Miss Minutes from Loki? She’s such an adorable character! Why not turn her into an AI assistant?”
+“Do you know Miss Minutes from _Loki_? She’s such an adorable character! Why not turn her into an AI assistant?”
 
 And with that thought, our journey began.
 

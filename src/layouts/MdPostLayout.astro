@@ -4,57 +4,137 @@ const { frontmatter } = Astro.props;
 ---
 
 <style lang="scss">
-    .chaos-post{
-      grid-column: 1/-1;
+  .chaos-title{
+    grid-column: 1/-1;
+    margin-top: 36px;
+  }
+  .chaos-post{
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1/-1;
 
-      padding-top: 36px;
+    margin-top: 12px;
 
-      h1{
-        text-align: center;
-      }
+    &-sidebar,
+    &-content {
+      grid-row: 1;
+      align-self: start;
+    }
 
-      img{
-        display: block;
-        margin: 0 auto;
+    &-sidebar{
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / 7;
 
-        border-radius: 6px;
-      }
+      &-metadata{
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-column: 1/-1;
 
-      &-desc{
-        margin-bottom: 12px;
+        >div{
+          display: grid;
+          grid-template-columns: subgrid;
+          grid-column: 1 / -1;
 
-        padding: 6px 24px;
+          padding: 12px 0;
 
-        border-radius: 6px;
-        background: ghostwhite;
+          border-bottom: 1px dotted #ddd;
 
-        font-style: italic;
+          span{
+            grid-column: span 5;
 
-        em{
-          font-size: 1.2rem;
+            &:first-child{
+              grid-column: span 1;
+            }
+          }
         }
 
-        p{
-          text-indent: 2rem;
+        &-tags{
+          span:last-child{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+          }
+          .tag-item{
+            padding: 3px 6px;
+
+            color: gray;
+            font-size: .9rem;
+
+            border-radius: 3px;
+            border: 1px dotted lightgray;
+            background: #f8f8f8;
+          }
         }
       }
     }
+
+    &-content{
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 8 / 25;
+
+      .chaos-markdown{
+        grid-column: 1/-1;
+      }
+    }
+  }
+
+  .chaos-table-header{
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1/-1;
+
+    border-bottom: 1px dashed lightgray;
+
+    &-label{
+      display: flex;
+      gap: 3px;
+    }
+  }
 </style>
 
 <BaseLayout pageTitle={frontmatter.title}>
+    <h1 class="chaos-title">{frontmatter.title}</h1>
     <div class="chaos-post">
-        <h1>{frontmatter.title}</h1>
-        <p>Published on: {frontmatter.pubDate.toString().slice(0,10)}</p>
+        <aside class="chaos-post-sidebar">
+            <div class="chaos-table-header">
+                <div class="chaos-table-header-label">
+                    <span>/</span>
+                    Metadata
+                </div>
+            </div>
 
-        <div class="chaos-post-desc">
-            <em>Me: </em>
-            <p>{frontmatter.description}</p>
-        </div>
+            <div class="chaos-post-sidebar-metadata">
+                <div>
+                    <span>DATE:</span>
+                    <span>{frontmatter.pubDate.toString().slice(0,10)}</span>
+                </div>
+                <div>
+                    <span>AUTHOR:</span>
+                    <span>{frontmatter.author}</span>
+                </div>
+                <div class="chaos-post-sidebar-metadata-tags">
+                    <span>TAGS:</span>
+                    <span>
+                        {frontmatter.tags.map((tag: string) => (
+                            <span class="tag-item">{tag}</span>
+                        ))}
+                    </span>
+                </div>
+            </div>
+        </aside>
+        <main class="chaos-post-content">
+            <div class="chaos-table-header">
+                <div class="chaos-table-header-label">
+                    <span>/</span>
+                    Article
+                </div>
+            </div>
 
-        <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
-
-        <div class="chaos-markdown">
-            <slot />
-        </div>
+            <div class="chaos-markdown">
+                <slot />
+            </div>
+        </main>
     </div>
 </BaseLayout>
