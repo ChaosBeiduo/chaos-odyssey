@@ -75,7 +75,7 @@ const sortedPosts = allPosts.sort((a: any, b: any) => {
 				</div>
 			</div>
 
-			{allPosts.map((post: any) => <BlogPost post={post} />)}
+			{sortedPosts.map((post: any) => <BlogPost post={post} />)}
 		</main>
 	</div>
 </BaseLayout>
