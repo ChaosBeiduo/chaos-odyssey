@@ -2,10 +2,14 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BlogPost from "../components/BlogPost.astro";
 
-const allPosts = Object.values(import.meta.glob('./posts/*.md', { eager: true }));
 const allPosts = Object.values(
 	import.meta.glob('./posts/*.{md,mdx}', { eager: true })
 );
+const sortedPosts = allPosts.sort((a: any, b: any) => {
+	const dateA = a.frontmatter.pubDate ? new Date(a.frontmatter.pubDate).valueOf() : 0;
+	const dateB = b.frontmatter.pubDate ? new Date(b.frontmatter.pubDate).valueOf() : 0;
+	return dateB - dateA;
+});
 ---
 <BaseLayout pageTitle={'Blog'}>
 	<style lang="scss">
