@@ -4,9 +4,16 @@ const { frontmatter } = Astro.props;
 ---
 
 <style lang="scss">
+  .chaos-container{
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1/-1;
+
+    padding-top: 36px;
+  }
   .chaos-title{
     grid-column: 1/-1;
-    margin-top: 36px;
+    font-family: Arial;
   }
   .chaos-post{
     display: grid;
@@ -95,6 +102,7 @@ const { frontmatter } = Astro.props;
 </style>
 
 <BaseLayout pageTitle={frontmatter.title}>
+    <div class="chaos-container">
     <h1 class="chaos-title">{frontmatter.title}</h1>
     <div class="chaos-post">
         <aside class="chaos-post-sidebar">
@@ -136,5 +144,6 @@ const { frontmatter } = Astro.props;
                 <slot />
             </div>
         </main>
+    </div>
     </div>
 </BaseLayout>
