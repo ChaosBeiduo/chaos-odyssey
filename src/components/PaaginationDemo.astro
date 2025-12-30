@@ -1,0 +1,155 @@
+---
+// Astro Component
+---
+
+<div class="pagination-demo-container">
+    <div class="controls">
+        <div class="control-group">
+            <label>Total Pages <span class="val-tag" id="total-val">20</span></label>
+            <input type="range" id="total-input" min="1" max="100" value="20" />
+        </div>
+        <div class="control-group">
+            <label>Current Page <span class="val-tag active-tag" id="current-val">5</span></label>
+            <input type="range" id="current-input" min="1" max="20" value="5" />
+        </div>
+    </div>
+
+    <div class="visualizer-area">
+        <div id="pagination-visualizer" class="btns-row"></div>
+    </div>
+
+    <div class="output-box">
+        <div class="output-header">Window Result (JSON)</div>
+        <pre id="json-result"></pre>
+    </div>
+</div>
+
+<script>
+    function getPaginationWindow(currentPage, totalPages) {
+        const last = totalPages;
+        if (totalPages <= 6) return { start: 2, end: last - 1 };
+
+        const isCloseToStart = currentPage - 1 <= 2;
+        const isCloseToEnd = totalPages - currentPage <= 2;
+
+        if (isCloseToStart) return { start: 2, end: Math.max(3, currentPage + 1) };
+        if (isCloseToEnd) return { start: Math.min(last - 2, currentPage - 1), end: last - 1 };
+
+        return { start: currentPage - 1, end: currentPage + 1 };
+    }
+
+    const totalInput = document.getElementById('total-input');
+    const currentInput = document.getElementById('current-input');
+    const totalVal = document.getElementById('total-val');
+    const currentVal = document.getElementById('current-val');
+    const visualizer = document.getElementById('pagination-visualizer');
+    const jsonResult = document.getElementById('json-result');
+
+    window.jumpToPage = (n) => {
+        currentInput.value = n;
+        update();
+    }
+
+    function update() {
+        const total = parseInt(totalInput.value);
+        let current = Math.min(parseInt(currentInput.value), total);
+
+        totalVal.textContent = total;
+        currentVal.textContent = current;
+        currentInput.max = total;
+
+        const result = getPaginationWindow(current, total);
+        jsonResult.textContent = JSON.stringify(result, null, 2);
+
+        renderVisual(current, total, result);
+    }
+
+    function renderVisual(current, total, result) {
+        const createBtn = (n) => {
+            const isActive = n === current;
+            // 这里的 class="active" 必须能被 CSS 匹配到
+            return `
+                <button 
+                    class="page-node ${isActive ? 'active' : ''}" 
+                    onclick="window.jumpToPage(${n})">
+                    ${n}
+                </button>`;
+        };
+
+        let html = createBtn(1);
+        if (result.start > 2) html += `<span class="dots">···</span>`;
+        for (let i = result.start; i <= result.end; i++) {
+            if (i > 1 && i < total) html += createBtn(i);
+        }
+        if (result.end < total - 1) html += `<span class="dots">···</span>`;
+        if (total > 1) html += createBtn(total);
+
+        visualizer.innerHTML = html;
+    }
+
+    totalInput.addEventListener('input', update);
+    currentInput.addEventListener('input', update);
+    update();
+</script>
+
+<style is:global>
+    .pagination-demo-container {
+        --primary: #171717;
+        --border: #e5e5e5;
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .controls { display: flex; gap: 2rem; margin-bottom: 2rem; }
+    .control-group { flex: 1; display: flex; flex-direction: column; gap: 0.8rem; }
+    .control-group label { font-size: 0.75rem; color: #737373; text-transform: uppercase; font-weight: 600; }
+    .val-tag { margin-left: 12px; font-family: monospace; font-size: 1rem; color: var(--primary); }
+
+    input[type="range"] { appearance: none; height: 2px; background: var(--border); accent-color: var(--primary); }
+
+    .visualizer-area {
+        padding: 3rem 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.5rem;
+        display: flex; justify-content: center;
+    }
+    .btns-row { display: flex; align-items: center; gap: 0.5rem; }
+
+    .page-node {
+        all: unset;
+        width: 36px; height: 36px;
+        display: flex; align-items: center; justify-content: center;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #fff;
+    }
+
+    /* 极简高亮：Current Page */
+    .page-node.active {
+        background: var(--primary) !important; /* 强制背景色 */
+        color: #ffffff !important;             /* 强制文字颜色 */
+        border-color: var(--primary);
+        font-weight: 700;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 2;
+    }
+
+    .page-node:hover:not(.active) {
+        border-color: var(--primary);
+    }
+
+    .dots { color: #a3a3a3; padding: 0 0.2rem; }
+
+    .output-box { background: #171717; padding: 1rem; border-radius: 6px; }
+    .output-header { font-size: 0.7rem; color: #737373; margin-bottom: 0.5rem; font-family: monospace; }
+    pre { margin: 0; font-size: 0.8rem; color: #f5f5f5; font-family: monospace; line-height: 1.4; }
+</style>
