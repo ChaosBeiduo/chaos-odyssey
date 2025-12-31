@@ -58,11 +58,19 @@ a {
 
 .chaos-markdown {
     counter-reset: figureCounter;
-    
+
     a {
         color: var(--primary);
-        font-style: italic;
+        display: inline-block;
         border-bottom: 1px solid var(--border);
+
+        transform: skewX(-15deg);
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: skewX(0deg);
+            opacity: 0.8;
+        }
     }
 
     h1, h2, h3{
