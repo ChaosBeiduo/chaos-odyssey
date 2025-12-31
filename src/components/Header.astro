@@ -37,8 +37,10 @@ const isActive = (href: string) => {
 
         padding: 6px 12px;
 
+        color: var(--primary);
         border-radius: 3px;
-        background: #1e1e1e11;
+        border: 1px solid var(--border);
+        background: var(--secondary);
         line-height: 1;
 
         backdrop-filter: blur(10px);
@@ -46,8 +48,8 @@ const isActive = (href: string) => {
         transition: all 0.2s;
 
         &.active, &:hover{
-          color: #e8e8e8;
-          background: rgba(0, 0, 0, 0.8);
+          color: var(--secondary);
+          background: var(--primary);
         }
 
         &:hover{
