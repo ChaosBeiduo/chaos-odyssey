@@ -7,9 +7,12 @@
 }
 
 :root {
-    --primary: #0033ff;
+    --primary: hsl(234, 90%, 60%);
     --secondary: #f3f3ff;
     --border: #0000ff33;
+    --gray: hsl(224, 7%, 36%);
+    --gray-bg: hsl(224, 19%, 97%);
+    --gray-border: hsl(224, 20%, 94%);
 }
 
 html {
