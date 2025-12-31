@@ -104,7 +104,15 @@
         font-family: ui-sans-serif, system-ui, sans-serif;
     }
 
-    .controls { display: flex; gap: 2rem; margin-bottom: 2rem; }
+    .controls { 
+        display: flex; 
+        gap: 2rem; 
+        margin-bottom: 2rem;
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+    
     .control-group { flex: 1; display: flex; flex-direction: column; gap: 0.8rem; }
     .control-group label { font-size: 0.75rem; color: #737373; text-transform: uppercase; font-weight: 600; }
     .val-tag { margin-left: 12px; font-family: monospace; font-size: 1rem; color: var(--pagination-primary); }
