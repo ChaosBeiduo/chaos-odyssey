@@ -1,11 +1,12 @@
 ---
 const currentPath = Astro.url.pathname;
 
+const showProgressBar = currentPath.includes('/posts/');
+
 const isActive = (href: string) => {
     if (currentPath === href) {
         return 'active';
     }
-
     return '';
 };
 ---
@@ -16,9 +17,12 @@ const isActive = (href: string) => {
         <a href="https://www.linkedin.com/in/ibunnchou/" target="_blank">[L]LINKEDIN</a>
         <a href="https://github.com/ChaosBeiduo" target="_blank">[G]GITHUB</a>
     </nav>
-    <div class="progress-container">
-        <div class="progress-bar"></div>
-    </div>
+
+    {showProgressBar && (
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+    )}
 </header>
 
 
