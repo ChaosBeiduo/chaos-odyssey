@@ -23,13 +23,22 @@ const frontmatter = post.frontmatter;
       }
 
       &-title{
-        grid-column: 4/20;
+        grid-column: 4/-1;
 
         &:hover{
           text-decoration: underline;
           text-decoration-style: wavy;
           text-underline-offset: 4px;
         }
+      }
+    }
+
+    @media (max-width: 768px) {
+    .chaos-blog-post-date{
+      grid-column: 1/10;
+    }
+      .chaos-blog-post-title{
+        grid-column: 10/-1;
       }
     }
 

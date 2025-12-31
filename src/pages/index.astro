@@ -57,6 +57,36 @@ const sortedPosts = allPosts.sort((a: any, b: any) => {
 				}
 			}
 		}
+
+
+		@media (max-width: 768px) {
+			.chaos-container {
+				padding-top: 20px;
+			}
+
+			.chaos-sidebar {
+				grid-column: 1 / -1;
+				margin-bottom: 24px; 
+
+				&-title {
+					grid-column: 1 / -1;
+				}
+			}
+
+			.chaos-blog {
+				grid-column: 1 / -1;
+				grid-row: auto;
+
+				&-header {
+					&-label-date{
+						grid-column: 1 / 10;
+					}
+					&-label-name {
+						grid-column: 10 / -1;
+					}
+				}
+			}
+		}
 	</style>
 
 	<div class="chaos-container">
