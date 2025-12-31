@@ -6,35 +6,25 @@ pubDate: 2025.12.25
 tags: ["Algorithms", "Frontend", "Sliding Window", "Two Pointers"]
 ---
 import PaginationDemo from '../../components/PaaginationDemo.astro';
+import FigurePreview from '../../components/FigurePreview.astro';
 
 Normally, a basic pagination often only includes `Previous` and `Next` buttons. But what if you have to navigate through thousands of pages every day?
 
 If you browse popular e-commerce sites like [Amazon](https://www.amazon.com) or [PlayStation Store](https://store.playstation.com), you'll notice that they provide numbered pages in between.
 
 <div className="img-flex-container">
-    <figure>
-        <img src="/images/pagination-amazon.png" alt="Pagination of Amazon"/>
-        <figcaption>Pagination of Amazon</figcaption>
-    </figure>
-    <figure>
-        <img src="/images/pagination-playstation.png" alt="Pagination of PlayStation"/>
-        <figcaption>Pagination of PlayStation</figcaption>
-    </figure>
+   <FigurePreview src="/images/pagination-amazon.png" caption="Pagination of Amazon" />
+   <FigurePreview src="/images/pagination-playstation.png" caption="Pagination of PlayStation" />
 </div>
 
 This small detail makes browsing through a large catalog much more convenient.
 
 # Structure
 Pagination consists of Page Operators and Pages.
-<figure>
-    <img src="/images/pagination-structure.png" alt="Structure"/>
-    <figcaption>Structure</figcaption>
-</figure>
+<FigurePreview src="/images/pagination-structure.png" caption="Structure" />
+
 Here, we assume a total of 9 pages. Let’s **walk through** the pagination process from the first page to the last page.
-<figure>
-    <img src="/images/pagination-process-simulation.png" alt="Process Simulation"/>
-    <figcaption>Process Simulation</figcaption>
-</figure>
+<FigurePreview src="/images/pagination-process-simulation.png" caption="Process Simulation" />
 
 ## Pagination Window and Pointer Model
 We can observe the following:
@@ -44,10 +34,8 @@ Therefore, we treat the first and last pages separately and only consider the mi
 
 **Changed behavior**: as you may notice, there are two hidden pointers that define the pagination window. Under normal conditions, both pointers dynamically shift to `n-1` and `n+1`.  
 With two boundary exceptions: when the pagination reaches the start, the left pointer remains at `2`; Similarly, when it reaches the end, the right pointer stays at `8`.
-<figure>
-    <img src="/images/pagination-pointers-and-window.png" alt="Pagination Window and Pointer Positions"/>
-    <figcaption>Pagination Window and Pointer Positions</figcaption>
-</figure>
+
+<FigurePreview src="/images/pagination-pointers-and-window.png" caption="Pagination Window and Pointer Positions" />
 
 ## Window Transition Rules
 Based on the structure and pointer behavior described above, we can observe that the key consideration lies in how the start and end boundaries of the window are defined.
