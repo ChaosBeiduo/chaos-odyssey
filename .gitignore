@@ -12,6 +12,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Docker
+data/
+letsencrypt/
 
 # environment variables
 .env
