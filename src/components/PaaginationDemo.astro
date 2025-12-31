@@ -94,12 +94,12 @@
 
 <style is:global>
     .pagination-demo-container {
-        --primary: #171717;
-        --border: #e5e5e5;
+        --pagination-primary: #171717;
+        --pagination-border: #e5e5e5;
         max-width: 600px;
         margin: 2rem auto;
         padding: 1.5rem;
-        border: 1px solid var(--border);
+        border: 1px solid var(--pagination-border);
         border-radius: 8px;
         font-family: ui-sans-serif, system-ui, sans-serif;
     }
@@ -107,14 +107,14 @@
     .controls { display: flex; gap: 2rem; margin-bottom: 2rem; }
     .control-group { flex: 1; display: flex; flex-direction: column; gap: 0.8rem; }
     .control-group label { font-size: 0.75rem; color: #737373; text-transform: uppercase; font-weight: 600; }
-    .val-tag { margin-left: 12px; font-family: monospace; font-size: 1rem; color: var(--primary); }
+    .val-tag { margin-left: 12px; font-family: monospace; font-size: 1rem; color: var(--pagination-primary); }
 
-    input[type="range"] { appearance: none; height: 2px; background: var(--border); accent-color: var(--primary); }
+    input[type="range"] { appearance: none; height: 2px; background: var(--pagination-border); accent-color: var(--pagination-primary); }
 
     .visualizer-area {
         padding: 3rem 0;
-        border-top: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
+        border-top: 1px solid var(--pagination-border);
+        border-bottom: 1px solid var(--pagination-border);
         margin-bottom: 1.5rem;
         display: flex; justify-content: center;
     }
@@ -124,7 +124,7 @@
         all: unset;
         width: 36px; height: 36px;
         display: flex; align-items: center; justify-content: center;
-        border: 1px solid var(--border);
+        border: 1px solid var(--pagination-border);
         border-radius: 4px;
         font-size: 0.875rem;
         cursor: pointer;
@@ -134,9 +134,9 @@
 
     /* 极简高亮：Current Page */
     .page-node.active {
-        background: var(--primary) !important; /* 强制背景色 */
+        background: var(--pagination-primary) !important; /* 强制背景色 */
         color: #ffffff !important;             /* 强制文字颜色 */
-        border-color: var(--primary);
+        border-color: var(--pagination-primary);
         font-weight: 700;
         transform: scale(1.1);
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -144,7 +144,7 @@
     }
 
     .page-node:hover:not(.active) {
-        border-color: var(--primary);
+        border-color: var(--pagination-primary);
     }
 
     .dots { color: #a3a3a3; padding: 0 0.2rem; }

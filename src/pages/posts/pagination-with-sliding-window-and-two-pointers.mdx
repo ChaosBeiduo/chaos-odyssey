@@ -114,12 +114,12 @@ From these conditions, two boolean flags can be derived:
 - `isCloseToStart = (n − 1 ≤ 2)`
 - `isCloseToEnd = (total − n ≤ 2)`
 
-## JavaScript Implementation
+## Code Implementation
 Based on the window and pointer model described above, the JavaScript implementation can be viewed as a direct translation of the window transition rules into deterministic boundary calculations.
 
 ### Core Function
 We define a pure function that accepts the current page and total pages, and returns the calculated window range.
-```javascript
+```js
 function getPaginationWindow(currentPage, totalPages) {
     const last = totalPages
 
@@ -159,7 +159,7 @@ function getPaginationWindow(currentPage, totalPages) {
 ```
 
 ### Interactive Demo
-<PaginationDemo client:load />
+<PaginationDemo />
 
 # Conclusion
 This experience meant a great deal to me. After solving countless algorithm problems, I finally had the opportunity to apply those ideas to a real-world project.

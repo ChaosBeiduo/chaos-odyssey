@@ -6,6 +6,12 @@
     font-display: swap;
 }
 
+:root {
+    --primary: #00f;
+    --secondary: #0000ff0d;
+    --border: #0000ff33;
+}
+
 html {
     background-color: white;
 }
@@ -49,9 +55,9 @@ a {
 
 .chaos-markdown {
     a {
-        color: #555;
+        color: var(--primary);
         font-style: italic;
-        border-bottom: 1px solid #999;
+        border-bottom: 1px solid var(--border);
     }
 
     h1, h2, h3{
@@ -63,7 +69,9 @@ a {
 
     :not(pre) code {
         padding: 3px 6px;
-        background: #eee;
+        
+        color: var(--primary);
+        background: var(--secondary);
         border-radius: 3px;
     }
     
