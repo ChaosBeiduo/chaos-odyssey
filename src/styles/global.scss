@@ -8,7 +8,7 @@
 
 :root {
     --primary: hsl(234, 90%, 60%);
-    --secondary: #f3f3ff;
+    --secondary: hsla(234, 90%, 60%, 0.1);
     --border: #0000ff33;
     --gray: hsl(224, 7%, 36%);
     --gray-bg: hsl(224, 19%, 97%);
@@ -62,7 +62,10 @@ a {
     a {
         color: var(--primary);
         display: inline-block;
-        border-bottom: 1px solid var(--border);
+        
+        text-decoration: underline;
+        text-decoration-color: var(--border);
+        text-underline-offset: 4px;
 
         transform: skewX(-15deg);
         transition: transform 0.3s ease;
@@ -95,8 +98,8 @@ a {
 
         code{
         }
-    } 
-    
+    }
+
     table{
         display: block;
         
@@ -134,6 +137,16 @@ a {
                     width: 100%;
                 }
             }
+        }
+    }
+    
+    &-references{
+        display: grid;
+        
+        >div{
+            display: flex;
+            align-items: start;
+            gap: 12px;
         }
     }
 }
