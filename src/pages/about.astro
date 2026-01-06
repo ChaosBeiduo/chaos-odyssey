@@ -13,23 +13,80 @@ const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript",
 	.chaos-about{
 		grid-column: 1 / 25;
 		padding-top: 36px;
+		
+		&-intro{
+			text-align: center;
+			
+			font-weight: lighter;
+			font-family: sans-serif;
+			
+			p{
+				margin: unset;
+			}
+
+			h1{
+				margin-bottom: unset;
+				color: var(--primary);
+				font-weight: lighter;
+
+				span{
+					font-size: 1.5rem;
+				}
+			}
+			
+			a{
+				text-decoration: underline;
+			}
+		}
+		
+		&-note{
+			padding: 0 6px;
+			width: fit-content;
+			color: var(--gray);
+			font-size: 0.875rem;
+			border-left: 3px solid var(--gray-border);
+			background-color: var(--gray-bg);
+		}
+		
+		highlight{
+			color: var(--primary);
+		}
+		
+		h3, ul, p{
+			margin: unset;
+		}
+		
+		h3{
+			margin-top: 36px;
+		}
+		
 	}
 </style>
 
 <BaseLayout pageTitle={'About Me'}>
 	<div class="chaos-about">
-		<h2>Hi there! I'm Beiduo.👾</h2>
+		<div class="chaos-about-intro">
+			<h1>Yiwen Zhang <span>張怡雯</span></h1>
+			<p>Frontend Developer, currently working at <a href="https://www.targetmol.com/">TopScience</a>.</p>
+			<p>Contact me at: <a href="mailto:ibunnchou@gmail.com">ibunnchou@gmail.com</a></p>
+		</div>
 
-		<p>Here are a few facts about me:</p>
+		<h3>HI! I'm Yiwen, a frontend developer. I ...</h3>
 		<ul>
-			<li>I live in {identity.country} and work as a {identity.occupation}.</li>
+			<li>Live in {identity.country}.</li>
 			{identity.hobbies.length >= 2 &&
-				<li>My hobbies are: {identity.hobbies[0]}, {identity.hobbies[1]}  and {identity.hobbies[2]}.</li>
+				<li>Love {identity.hobbies[0]}, {identity.hobbies[1]}  and {identity.hobbies[2]}.</li>
 			}
 		</ul>
-		<p>My skills are:</p>
+		
+		<h3>LANGUAGE PROFICIENCY</h3>
+		<p>I have native fluency in <highlight>Chinese</highlight>, and can speak in conversational <highlight>English</highlight> and <highlight>Japanese</highlight>.</p>
+		<div class="chaos-about-note">I speak a little bit of <highlight>French</highlight>, but at a very pre-school proficiency!</div>
+		<h3>SKILLS</h3>
 		<ul>
-			{skills.map((skill) => <li>{skill}</li>)}
+			<li>Frontend: HTML/CSS/JavaScript, Vue.js, Nuxt.js, React.js, Astro, Next.js</li>
+			<li>Backend: Python, Golang, MySQL, Java</li>
+			<li>Design: Figma, Photoshop</li>
 		</ul>
 	</div>
 </BaseLayout>
