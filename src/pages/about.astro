@@ -7,7 +7,6 @@ const identity = {
 	hobbies: ["Gaming", "Movies", "Stargazing🔭"],
 };
 
-const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript", "Python", "GoLang"];
 ---
 <style lang="scss">
 	.chaos-about{
@@ -36,10 +35,15 @@ const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript",
 			
 			a{
 				text-decoration: underline;
+				
+				&:hover{
+					opacity: 0.8;
+				}
 			}
 		}
 		
 		&-note{
+			margin-top: 12px;
 			padding: 0 6px;
 			width: fit-content;
 			color: var(--gray);
@@ -74,9 +78,7 @@ const skills = ["Vue.js", "Nuxt.js", "React.js", "Astro", "HTML/CSS/JavaScript",
 		<h3>HI! I'm Yiwen, a frontend developer. I ...</h3>
 		<ul>
 			<li>Live in {identity.country}.</li>
-			{identity.hobbies.length >= 2 &&
-				<li>Love {identity.hobbies[0]}, {identity.hobbies[1]}  and {identity.hobbies[2]}.</li>
-			}
+			<li>Love Gaming, Movies(<highlight>David Lynch</highlight> is my favorite director), Stargazing(If you love it too, watch <highlight>チ。地球の運動について</highlight>) and Ramen.</li>
 		</ul>
 		
 		<h3>LANGUAGE PROFICIENCY</h3>
