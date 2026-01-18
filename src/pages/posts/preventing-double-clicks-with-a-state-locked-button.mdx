@@ -1,0 +1,177 @@
+---
+layout: ../../layouts/MdPostLayout.astro
+title: "Preventing Double-Clicks with a State-Locked Button"
+author: ChaosBeiduo
+pubDate: 2026.01.09
+tags: ["Frontend", "Vue.js", "Hook"]
+---
+
+My company website has a recurring issue: users often double-click buttons when they don't see an immediate response.   
+This leads to redundant submissions on login and order pages, causing data inconsistency and a poor user experience. It even affects download buttons, where multiple clicks trigger simultaneous downloads, wasting significant server resources.
+
+Although we already have a `throttle` utility, applying it manually across different components is inefficient. It’s even worse once you factor in loading status and UI feedback. To keep the code `DRY`, I decided to move beyond simple utility functions. By leveraging a custom abstraction (in this case, a reusable button component), we can encapsulate locking, loading state, and UI behavior into a single place, solving this problem once and for all.
+
+# The "Naïve" Code
+The original implementation is split into three parts.
+
+1. A generic `throttle` utility function:
+```typescript title="/utils/tools.ts"
+export function throttle(fn: Function, delay: number) {
+    let lastTime = 0;
+    return function(...args: any[]) {
+        const now = Date.now();
+        if (now - lastTime >= delay) {
+            fn.apply(this, args);
+            lastTime = now;
+        }
+    }
+}
+```
+
+2. The button template:
+```html title="/pages/index.vue"
+<template>
+    <button @click="throttledSubmit" :class="{'loading': isLoading}">Submit</button>    
+</template>
+```
+
+3. Submission logic and loading state:
+```typescript title="/pages/index.vue"
+import { ref } from 'vue';
+import { throttle } from '@/utils/tools';
+
+const isLoading = ref(false);
+
+const submitForm = async () => {
+    isLoading.value = true;
+    try {
+        await request("/submit", { method: 'POST' });
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+// Allow one execution every 1000ms
+const throttledSubmit = throttle(submitForm, 1000);
+```
+
+At first glance, this works. However, as the number of buttons and interaction scenarios grows, the same pattern: **throttling, loading state management, and UI feedback**, has to be repeated everywhere.
+
+# a Better Solution
+Instead of scattering this logic across pages, we can encapsulate it in a reusable component. Let’s create a `LockButton` component and expose a slot for flexible content.
+```vue title="/components/LockButton.vue"
+<template>
+  <button>
+    <slot />
+  </button>
+</template>
+```
+This allows us to use it just like a normal button:
+`<LockButton>`Text Here`</LockButton>`
+
+Next, we add an `action` prop that represents the asynchronous operation triggered by the button.
+```vue title="/components/LockButton.vue"
+<script lang="ts">
+  interface Props {
+    action: (...args: any[]) => Promise<any>;
+  }
+
+  const props = defineProps<Props>();
+</script>
+```
+
+We then define a click handler inside the component and bind it to the button’s `@click` event.
+```vue title="/components/LockButton.vue" ins={8-10, 14}
+<script lang="ts">
+  interface Props {
+    action: (...args: any[]) => Promise<any>;
+  }
+
+  const props = defineProps<Props>();
+
+  const handleClick = async (...args: any[]) => {
+    await props.action(...args);
+  }
+</script>
+
+<template>
+  <button @click="handleCLick">
+    <slot />
+  </button>
+</template>
+```
+
+## Adding Loading State and UI Feedback
+To improve the user experience, we add a loading state `isLoading` that indicates the action is in progress.
+```vue title="/components/LockButton.vue" ins={10-12, 14-17, 22, 24} "isLoading"
+<script lang="ts">
+  interface Props {
+    action: (...args: any[]) => Promise<any>;
+  }
+
+  const props = defineProps<Props>();
+  const isLoading = ref(false);
+
+  const handleClick = async (...args: any[]) => {
+      isLoading.value = true;
+      
+      try{
+        await props.action(...args);
+      }finally {
+        // Regardless of success or failure
+        isLoading.value = false;
+      }
+ }
+</script>
+
+<template>
+  <button @click="handleCLick" :disabled="isLoading">
+    <slot />
+    <span v-if="isLoading" class="spinner"></span>
+  </button>
+</template>
+```
+Now the button visually communicates that it’s busy, and the disabled state prevents accidental interaction.
+
+## The Key Insight: State as a Natural Lock
+Previously, we relied on `throttle` to prevent double‑clicks. However, with an explicit `isLoading` state, we already know whether the action is running. This state becomes a natural lock.
+
+By adding a single guard clause, we can completely eliminate double‑clicks:
+```vue title="/components/LockButton.vue" ins={10}
+<script lang="ts">
+  interface Props {
+    action: (...args: any[]) => Promise<any>;
+  }
+
+  const props = defineProps<Props>();
+  const isLoading = ref(false);
+
+  const handleClick = async (...args: any[]) => {
+      if (loading.value) return
+     
+      isLoading.value = true;
+      
+      try{
+        await props.action(...args);
+      }finally {
+        // 无论有没有成功，最后都false
+        isLoading.value = false;
+      }
+ }
+</script>
+```
+No timers, no throttling utilities, just a clear, intention‑revealing state check.
+
+# Using the `LockButton`
+With all the complexity hidden inside the component, usage becomes extremely simple:
+```vue title="/pages/index.vue"
+<script lang="ts">
+  const submitForm = async () => {
+    await request("/submit", { method: 'POST' });
+  };
+</script>
+
+<template>
+    <LockButton @click="submitForm">Submit</LockButton>    
+</template>
+```
