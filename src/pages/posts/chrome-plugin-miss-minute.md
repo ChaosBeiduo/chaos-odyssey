@@ -1,7 +1,6 @@
 ---
 layout: ../../layouts/MdPostLayout.astro
 title: "Building Miss Minutes: My Google Hackathon Journey"
-author: ChaosBeiduo
 description: "One month ago, I participated in my first-ever Hackathon organized by SegmentFault and Google. The theme was Innovate for the Future and the competition spanned a considerable amount of time, allowing for deep exploration and development."
 image:
     url: "https://images.immediate.co.uk/production/volatile/sites/3/2021/06/loki_miss_minutes_tara_strong-36e03f0.jpg?quality=90&resize=620,414"

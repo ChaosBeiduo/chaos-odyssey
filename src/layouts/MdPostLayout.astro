@@ -59,9 +59,12 @@ const { frontmatter } = Astro.props;
         &-tags{
           span:last-child{
             display: flex;
-            justify-content: end;
             flex-wrap: wrap;
             gap: 6px;
+            
+            @media (max-width: 768px){
+              justify-content: end;
+            }
           }
           .tag-item{
             padding: 3px 6px;
@@ -103,10 +106,9 @@ const { frontmatter } = Astro.props;
 
   @media (max-width: 768px) {
     .chaos-post {
-      /* 1. 将网格改为单列布局 */
       display: flex;
       flex-direction: column;
-      gap: 24px; /* metadata 和 article 之间的间距 */
+      gap: 24px; 
     }
 
     .chaos-post-sidebar,
@@ -146,7 +148,7 @@ const { frontmatter } = Astro.props;
                 </div>
                 <div>
                     <span>AUTHOR:</span>
-                    <span>{frontmatter.author}</span>
+                    <span>Yiwen Zhang</span>
                 </div>
                 <div class="chaos-post-sidebar-metadata-tags">
                     <span>TAGS:</span>
