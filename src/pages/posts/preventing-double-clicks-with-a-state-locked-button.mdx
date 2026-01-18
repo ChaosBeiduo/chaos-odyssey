@@ -146,14 +146,13 @@ By adding a single guard clause, we can completely eliminate double‑clicks:
   const isLoading = ref(false);
 
   const handleClick = async (...args: any[]) => {
-      if (loading.value) return
+      if (isLoading.value) return
      
       isLoading.value = true;
       
       try{
         await props.action(...args);
       }finally {
-        // 无论有没有成功，最后都false
         isLoading.value = false;
       }
  }
