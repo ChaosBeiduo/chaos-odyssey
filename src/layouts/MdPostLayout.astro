@@ -13,7 +13,6 @@ const { frontmatter } = Astro.props;
   }
   .chaos-title{
     grid-column: 1/-1;
-    font-family: Arial;
   }
   .chaos-post{
     display: grid;
@@ -131,7 +130,7 @@ const { frontmatter } = Astro.props;
 
 <BaseLayout pageTitle={frontmatter.title}>
     <div class="chaos-container">
-    <h1 class="chaos-title">{frontmatter.title}</h1>
+    <h1 class="chaos-title text-4xl">{frontmatter.title}</h1>
     <div class="chaos-post">
         <aside class="chaos-post-sidebar">
             <div class="chaos-table-header">
