@@ -13,7 +13,7 @@ const {pageTitle} = Astro.props;
         <title>ChaosLand: {pageTitle}</title>
 
         <style lang="scss">
-          .awesome-chaosland{
+          .chaos-land-is-awesome{
             display: flex;
             flex-direction: column;
 
@@ -32,13 +32,13 @@ const {pageTitle} = Astro.props;
     </head>
 
     <body>
-        <div class="awesome-chaosland">
+        <Header />
+        
+        <div class="chaos-land-is-awesome">
             <div class="chaos-wrapper">
-                <Header />
-
                 <slot/>
-
             </div>
+            
             <Footer />
         </div>
     </body>
