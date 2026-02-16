@@ -11,101 +11,81 @@ const sortedPosts = allPosts.sort((a: any, b: any) => {
 	return dateB - dateA;
 });
 ---
+
 <BaseLayout pageTitle={'Blog'}>
 	<style lang="scss">
-		.chaos-container{
-			display: grid;
-			grid-template-columns: subgrid;
-			grid-column: 1/-1;
-
+		.chaos-mail-inbox {
+			grid-column: 1 / 25;
 			padding-top: 36px;
-		}
-		.chaos-sidebar{
-			display: grid;
-			grid-template-columns: subgrid;
-			grid-column: 1 / 6;
+			max-width: 100%;
 
-			&-title{
-				grid-column: 1 / 14;
-			}
-		}
-
-		.chaos-blog{
-			display: grid;
-			grid-template-columns: subgrid;
-			grid-column: 6 / 25;
-			grid-row: 2 / 4;
-
-			&-header{
-				display: grid;
-				grid-template-columns: subgrid;
-				grid-column: 1/-1;
-
-				border-bottom: 1px dashed lightgray;
-
-				&-label{
-					display: flex;
-					gap: 3px;
-
-					&-date{
-						grid-column: 1/4;
-					}
-
-					&-name{
-						grid-column: 4/20;
-					}
-				}
-			}
-		}
-
-
-		@media (max-width: 768px) {
-			.chaos-container {
+			@media (max-width: 768px) {
 				padding-top: 20px;
 			}
+		}
 
-			.chaos-sidebar {
-				grid-column: 1 / -1;
-				margin-bottom: 24px; 
+		.chaos-mail-inbox-header {
+			margin-bottom: 24px;
+			padding-bottom: 12px;
+			border-bottom: 2px solid var(--gray-border);
 
-				&-title {
-					grid-column: 1 / -1;
-				}
+			h1 {
+				margin: 0;
+				font-size: 1.5rem;
+				font-weight: 600;
+				color: var(--gray);
 			}
 
-			.chaos-blog {
-				grid-column: 1 / -1;
-				grid-row: auto;
+			@media (max-width: 768px) {
+				margin-bottom: 16px;
+				padding-bottom: 8px;
 
-				&-header {
-					&-label-date{
-						grid-column: 1 / 10;
-					}
-					&-label-name {
-						grid-column: 10 / -1;
-					}
+				h1 {
+					font-size: 1.25rem;
 				}
 			}
+		}
+
+		.chaos-mail-list {
+			display: flex;
+			flex-direction: column;
+			background: white;
+			border: 1px solid var(--gray-border);
+			border-radius: 8px;
+			overflow: hidden;
+			box-shadow: 0 1px 3px color-mix(in oklch, var(--gray) 8%, transparent);
+
+			@media (max-width: 768px) {
+				border-radius: 0;
+				border-left: none;
+				border-right: none;
+			}
+		}
+
+		.chaos-mail-empty {
+			padding: 48px 20px;
+			text-align: center;
+			color: var(--gray);
+			opacity: 0.6;
+			font-size: 0.9375rem;
 		}
 	</style>
 
-	<div class="chaos-container">
-		<aside class="chaos-sidebar">
-			<h1 class="chaos-sidebar-title">Blog</h1>
-		</aside>
-		<main class="chaos-blog">
-			<div class="chaos-blog-header">
-				<div class="chaos-blog-header-label chaos-blog-header-label-date">
-					<span>/</span>
-					DATE
-				</div>
-				<div class="chaos-blog-header-label chaos-blog-header-label-name">
-					<span>/</span>
-					NAME
-				</div>
-			</div>
+	<div class="chaos-mail-inbox">
+		<header class="chaos-mail-inbox-header">
+			<h1>Blog</h1>
+		</header>
 
-			{sortedPosts.map((post: any) => <BlogPost post={post} />)}
-		</main>
+		{sortedPosts.length > 0 ? (
+			<div class="chaos-mail-list" role="list">
+				{sortedPosts.map((post: any) => (
+					<BlogPost post={post} />
+				))}
+			</div>
+		) : (
+			<div class="chaos-mail-empty">
+				No posts yet. Check back soon!
+			</div>
+		)}
 	</div>
 </BaseLayout>

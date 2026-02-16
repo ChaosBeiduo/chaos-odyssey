@@ -1,50 +1,499 @@
 ---
-const {post} = Astro.props;
+const { post } = Astro.props;
 const frontmatter = post.frontmatter;
+const postId = `post-${post.url?.replace(/[^a-z0-9]/gi, '-') || Math.random().toString(36)}`;
+
+// Extract preview snippet from description or first paragraph
+const preview = frontmatter.description || '';
+const previewLength = 120;
+const snippet = preview.length > previewLength 
+	? preview.slice(0, previewLength).trim() + '...' 
+	: preview;
+
+// Format date
+const pubDate = frontmatter.pubDate 
+	? new Date(frontmatter.pubDate).toLocaleDateString('en-US', { 
+		year: 'numeric', 
+		month: 'short', 
+		day: 'numeric' 
+	})
+	: '';
+
+// Tags array
+const tags = frontmatter.tags || [];
+
+// Reading time estimation (rough: ~200 words per minute, ~5 chars per word)
+const estimateReadingTime = (content: string) => {
+	const words = content.length / 5;
+	const minutes = Math.ceil(words / 200);
+	return minutes;
+};
+
+const readingTime = frontmatter.readingTime || estimateReadingTime(preview || '');
 ---
 
+<article class="chaos-mail-row" data-post-id={postId}>
+	<button 
+		class="chaos-mail-row-toggle"
+		type="button"
+		aria-expanded="false"
+		aria-controls={`${postId}-content`}
+		id={`${postId}-toggle`}
+	>
+		<div class="chaos-mail-row-header">
+			<!-- Left indicator (unread dot / category icon) -->
+			<div class="chaos-mail-indicator" aria-hidden="true">
+				<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" width="8" height="8">
+					<circle cx="4" cy="4" r="3" fill="currentColor" />
+				</svg>
+			</div>
+
+			<!-- Main content area -->
+			<div class="chaos-mail-row-main">
+				<div class="chaos-mail-row-top">
+					<h3 class="chaos-mail-title">{frontmatter.title}</h3>
+					<time class="chaos-mail-date" datetime={frontmatter.pubDate?.toString() || ''}>
+						{pubDate}
+					</time>
+				</div>
+
+				<div class="chaos-mail-row-meta">
+					{tags.length > 0 && (
+						<div class="chaos-mail-tags">
+							{tags.slice(0, 3).map((tag: string) => (
+								<span class="chaos-mail-tag">{tag}</span>
+							))}
+							{tags.length > 3 && (
+								<span class="chaos-mail-tag-more">+{tags.length - 3}</span>
+							)}
+						</div>
+					)}
+					{snippet && (
+						<p class="chaos-mail-snippet">{snippet}</p>
+					)}
+				</div>
+			</div>
+
+			<!-- Expand/collapse icon -->
+			<div class="chaos-mail-expand-icon" aria-hidden="true">
+				<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+					<path d="M6 9L2 5h8L6 9z" fill="currentColor" />
+				</svg>
+			</div>
+		</div>
+	</button>
+
+	<!-- Expanded content -->
+	<div 
+		class="chaos-mail-expanded"
+		id={`${postId}-content`}
+		aria-labelledby={`${postId}-toggle`}
+		aria-hidden="true"
+	>
+		<div class="chaos-mail-expanded-inner">
+			{frontmatter.image?.url && (
+				<div class="chaos-mail-cover">
+					<img 
+						src={frontmatter.image.url} 
+						alt={frontmatter.image.alt || frontmatter.title}
+						loading="lazy"
+					/>
+				</div>
+			)}
+
+			{frontmatter.description && (
+				<p class="chaos-mail-description">{frontmatter.description}</p>
+			)}
+
+			<div class="chaos-mail-expanded-meta">
+				{tags.length > 0 && (
+					<div class="chaos-mail-tags-full">
+						{tags.map((tag: string) => (
+							<span class="chaos-mail-tag">{tag}</span>
+						))}
+					</div>
+				)}
+
+				<div class="chaos-mail-meta-row">
+					{readingTime > 0 && (
+						<span class="chaos-mail-meta-item">
+							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="14" height="14" aria-hidden="true">
+								<circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5" />
+								<path d="M8 4v4l3 2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" />
+							</svg>
+							{readingTime} min read
+						</span>
+					)}
+					{pubDate && (
+						<span class="chaos-mail-meta-item">
+							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="14" height="14" aria-hidden="true">
+								<rect x="3" y="4" width="10" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.5" />
+								<path d="M3 6h10M6 3v3M10 3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+							</svg>
+							Published {pubDate}
+						</span>
+					)}
+				</div>
+			</div>
+
+			<a 
+				href={post.url} 
+				class="chaos-mail-more-link"
+				aria-label={`Read more: ${frontmatter.title}`}
+			>
+				Read more
+				<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="14" height="14" aria-hidden="true">
+					<path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+				</svg>
+			</a>
+		</div>
+	</div>
+</article>
+
 <style lang="scss">
-    .chaos-blog-post {
-      display: grid;
-      grid-template-columns: subgrid;
-      grid-column: 1/-1;
-      align-items: start;
+	.chaos-mail-row {
+		display: block;
+		border-bottom: 1px solid var(--gray-border);
+		background: white;
+		transition: background-color 0.15s ease;
 
-      padding: 6px 0;
+		&:hover {
+			background: var(--gray-bg);
+		}
 
-      &-visible{
-        display: grid;
-        grid-template-columns: subgrid;
-        grid-column: 1/-1;
-      }
+		&[data-expanded="true"] {
+			background: var(--gray-bg);
+			border-left: 3px solid var(--primary);
 
-      &-date{
-        grid-column: 1/4;
-      }
+			.chaos-mail-indicator {
+				color: var(--primary);
+			}
 
-      &-title{
-        grid-column: 4/-1;
+			.chaos-mail-expand-icon {
+				transform: rotate(180deg);
+			}
+		}
 
-        &:hover{
-          text-decoration: underline;
-          text-decoration-style: wavy;
-          text-underline-offset: 4px;
-        }
-      }
-    }
+		&:focus-within {
+			outline: 2px solid var(--primary);
+			outline-offset: -2px;
+		}
+	}
 
-    @media (max-width: 768px) {
-    .chaos-blog-post-date{
-      grid-column: 1/10;
-    }
-      .chaos-blog-post-title{
-        grid-column: 10/-1;
-      }
-    }
+	.chaos-mail-row-toggle {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+		border: none;
+		background: none;
+		cursor: pointer;
+		text-align: left;
+		font-family: inherit;
+		font-size: inherit;
+		color: inherit;
 
+		&:focus-visible {
+			outline: 2px solid var(--primary);
+			outline-offset: -2px;
+		}
+	}
+
+	.chaos-mail-row-header {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		padding: 16px 20px;
+		min-height: 80px;
+
+		@media (max-width: 768px) {
+			padding: 14px 16px;
+			gap: 10px;
+		}
+	}
+
+	.chaos-mail-indicator {
+		flex-shrink: 0;
+		margin-top: 4px;
+		color: var(--primary);
+		opacity: 0.6;
+		transition: opacity 0.2s ease, color 0.2s ease;
+	}
+
+	.chaos-mail-row[data-expanded="true"] .chaos-mail-indicator {
+		opacity: 1;
+	}
+
+	.chaos-mail-row-main {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.chaos-mail-row-top {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 16px;
+		flex-wrap: wrap;
+	}
+
+	.chaos-mail-title {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--gray);
+		line-height: 1.4;
+		flex: 1;
+		min-width: 200px;
+	}
+
+	.chaos-mail-date {
+		flex-shrink: 0;
+		font-size: 0.875rem;
+		color: var(--gray);
+		opacity: 0.7;
+		white-space: nowrap;
+
+		@media (max-width: 768px) {
+			width: 100%;
+			margin-top: 4px;
+		}
+	}
+
+	.chaos-mail-row-meta {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.chaos-mail-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		align-items: center;
+	}
+
+	.chaos-mail-tag {
+		display: inline-block;
+		padding: 2px 8px;
+		font-size: 0.75rem;
+		color: var(--primary);
+		background: var(--secondary);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		white-space: nowrap;
+	}
+
+	.chaos-mail-tag-more {
+		display: inline-block;
+		padding: 2px 8px;
+		font-size: 0.75rem;
+		color: var(--gray);
+		opacity: 0.7;
+	}
+
+	.chaos-mail-snippet {
+		margin: 0;
+		font-size: 0.875rem;
+		color: var(--gray);
+		opacity: 0.8;
+		line-height: 1.5;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.chaos-mail-expand-icon {
+		flex-shrink: 0;
+		margin-top: 4px;
+		color: var(--gray);
+		opacity: 0.5;
+		transition: transform 0.3s ease, opacity 0.2s ease;
+	}
+
+	.chaos-mail-row:hover .chaos-mail-expand-icon {
+		opacity: 0.8;
+	}
+
+	// Expanded content
+	.chaos-mail-expanded {
+		overflow: hidden;
+		max-height: 0;
+		opacity: 0;
+		pointer-events: none;
+		transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+			opacity 0.3s ease,
+			padding 0.3s ease;
+
+		&[aria-hidden="false"] {
+			max-height: 2000px;
+			opacity: 1;
+			pointer-events: auto;
+			padding: 0 20px 20px 20px;
+
+			@media (max-width: 768px) {
+				padding: 0 16px 16px 16px;
+			}
+		}
+	}
+
+	.chaos-mail-expanded-inner {
+		padding-top: 16px;
+		border-top: 1px solid var(--gray-border);
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.chaos-mail-cover {
+		width: 100%;
+		max-width: 500px;
+		border-radius: 8px;
+		overflow: hidden;
+		border: 1px solid var(--gray-border);
+
+		img {
+			width: 100%;
+			height: auto;
+			display: block;
+			object-fit: cover;
+		}
+	}
+
+	.chaos-mail-description {
+		margin: 0;
+		font-size: 0.9375rem;
+		color: var(--gray);
+		line-height: 1.6;
+	}
+
+	.chaos-mail-expanded-meta {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding-top: 8px;
+	}
+
+	.chaos-mail-tags-full {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.chaos-mail-meta-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+	}
+
+	.chaos-mail-meta-item {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 0.8125rem;
+		color: var(--gray);
+		opacity: 0.8;
+
+		svg {
+			flex-shrink: 0;
+			color: var(--primary);
+			opacity: 0.7;
+		}
+	}
+
+	.chaos-mail-more-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		width: fit-content;
+		padding: 8px 16px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--primary);
+		background: var(--secondary);
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		text-decoration: none;
+		transition: all 0.2s ease;
+
+		&:hover,
+		&:focus-visible {
+			background: var(--primary);
+			color: white;
+			transform: translateY(-1px);
+			box-shadow: 0 2px 8px color-mix(in oklch, var(--primary) 20%, transparent);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--primary);
+			outline-offset: 2px;
+		}
+
+		svg {
+			transition: transform 0.2s ease;
+		}
+
+		&:hover svg {
+			transform: translateX(2px);
+		}
+	}
 </style>
 
-<div class="chaos-blog-post">
-    <span class="chaos-blog-post-date">{frontmatter.pubDate.toString().slice(0,10)}</span>
-    <a class="chaos-blog-post-title" href={post.url}>{frontmatter.title}</a>
-</div>
+<script>
+	// Accordion behavior: only one expanded at a time
+	(function initMailAccordion() {
+		const rows = document.querySelectorAll('.chaos-mail-row');
+		const allowMultiple = false; // Set to true to allow multiple expanded
+
+		rows.forEach((row) => {
+			const toggle = row.querySelector('.chaos-mail-row-toggle');
+			const expanded = row.querySelector('.chaos-mail-expanded');
+			
+			if (!toggle || !expanded) return;
+
+			toggle.addEventListener('click', (e) => {
+				// Don't toggle if clicking the "More" link
+				const target = e.target;
+				if (target && target.closest && target.closest('.chaos-mail-more-link')) {
+					return;
+				}
+
+				const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+
+				if (!allowMultiple && !isExpanded) {
+					// Collapse all other rows
+					rows.forEach((otherRow) => {
+						if (otherRow !== row) {
+							const otherToggle = otherRow.querySelector('.chaos-mail-row-toggle');
+							const otherExpanded = otherRow.querySelector('.chaos-mail-expanded');
+							
+							if (otherToggle && otherExpanded) {
+								otherToggle.setAttribute('aria-expanded', 'false');
+								otherExpanded.setAttribute('aria-hidden', 'true');
+								otherRow.setAttribute('data-expanded', 'false');
+							}
+						}
+					});
+				}
+
+				// Toggle current row
+				const newState = !isExpanded;
+				toggle.setAttribute('aria-expanded', String(newState));
+				expanded.setAttribute('aria-hidden', String(!newState));
+				row.setAttribute('data-expanded', String(newState));
+			});
+
+			// Keyboard support
+			toggle.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					toggle.click();
+				}
+			});
+		});
+	})();
+</script>
