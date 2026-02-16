@@ -30,6 +30,11 @@ const estimateReadingTime = (content: string) => {
 };
 
 const readingTime = frontmatter.readingTime || estimateReadingTime(preview || '');
+
+// Check if post is new (within last 7 days)
+const isNew = frontmatter.pubDate 
+	? (Date.now() - new Date(frontmatter.pubDate).getTime()) < 7 * 24 * 60 * 60 * 1000
+	: false;
 ---
 
 <article class="chaos-mail-row" data-post-id={postId}>
@@ -41,17 +46,22 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 		id={`${postId}-toggle`}
 	>
 		<div class="chaos-mail-row-header">
-			<!-- Left indicator (unread dot / category icon) -->
+			<!-- Left indicator (8-bit pixel dot) -->
 			<div class="chaos-mail-indicator" aria-hidden="true">
 				<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" width="8" height="8">
-					<circle cx="4" cy="4" r="3" fill="currentColor" />
+					<rect x="2" y="2" width="4" height="4" fill="currentColor" />
 				</svg>
 			</div>
 
 			<!-- Main content area -->
 			<div class="chaos-mail-row-main">
 				<div class="chaos-mail-row-top">
-					<h3 class="chaos-mail-title">{frontmatter.title}</h3>
+					<div class="chaos-mail-title-wrapper">
+						<h3 class="chaos-mail-title">{frontmatter.title}</h3>
+						{isNew && (
+							<span class="chaos-mail-new-label">NEW</span>
+						)}
+					</div>
 					<time class="chaos-mail-date" datetime={frontmatter.pubDate?.toString() || ''}>
 						{pubDate}
 					</time>
@@ -74,10 +84,10 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 				</div>
 			</div>
 
-			<!-- Expand/collapse icon -->
+			<!-- Expand/collapse icon (retro triangle) -->
 			<div class="chaos-mail-expand-icon" aria-hidden="true">
-				<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" width="12" height="12">
-					<path d="M6 9L2 5h8L6 9z" fill="currentColor" />
+				<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" width="10" height="10">
+					<polygon points="6,8 2,4 10,4" fill="currentColor" />
 				</svg>
 			</div>
 		</div>
@@ -106,6 +116,27 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 			)}
 
 			<div class="chaos-mail-expanded-meta">
+				<div class="chaos-mail-preview-header">
+					<div class="chaos-mail-header-row">
+						<span class="chaos-mail-header-label">SUBJECT:</span>
+						<span class="chaos-mail-header-value">{frontmatter.title}</span>
+					</div>
+					{pubDate && (
+						<div class="chaos-mail-header-row">
+							<span class="chaos-mail-header-label">DATE:</span>
+							<span class="chaos-mail-header-value">{pubDate}</span>
+						</div>
+					)}
+					{tags.length > 0 && (
+						<div class="chaos-mail-header-row">
+							<span class="chaos-mail-header-label">TAGS:</span>
+							<span class="chaos-mail-header-value">
+								{tags.join(', ')}
+							</span>
+						</div>
+					)}
+				</div>
+
 				{tags.length > 0 && (
 					<div class="chaos-mail-tags-full">
 						{tags.map((tag: string) => (
@@ -117,22 +148,26 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 				<div class="chaos-mail-meta-row">
 					{readingTime > 0 && (
 						<span class="chaos-mail-meta-item">
-							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="14" height="14" aria-hidden="true">
-								<circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5" />
-								<path d="M8 4v4l3 2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" />
+							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="12" height="12" aria-hidden="true">
+								<rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1" />
+								<path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1" fill="none" />
 							</svg>
 							{readingTime} min read
 						</span>
 					)}
 					{pubDate && (
 						<span class="chaos-mail-meta-item">
-							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="14" height="14" aria-hidden="true">
-								<rect x="3" y="4" width="10" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.5" />
-								<path d="M3 6h10M6 3v3M10 3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="12" height="12" aria-hidden="true">
+								<rect x="3" y="3" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1" />
+								<path d="M3 6h10M6 3v3M10 3v3" stroke="currentColor" stroke-width="1" />
 							</svg>
 							Published {pubDate}
 						</span>
 					)}
+					<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="12" height="12" aria-hidden="true" class="chaos-mail-doc-icon">
+								<rect x="4" y="2" width="8" height="12" fill="none" stroke="currentColor" stroke-width="1" />
+								<path d="M4 2v12h8M6 5h4M6 7h4M6 9h3" stroke="currentColor" stroke-width="1" fill="none" />
+							</svg>
 				</div>
 			</div>
 
@@ -151,19 +186,41 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 </article>
 
 <style lang="scss">
+	// Retro Windows 98 beveled border helpers
+	@mixin retro-raised {
+		border-style: solid;
+		border-width: 1px;
+		border-top-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+		border-left-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+		border-bottom-color: color-mix(in oklch, var(--gray) 30%, black);
+		border-right-color: color-mix(in oklch, var(--gray) 30%, black);
+	}
+
+	@mixin retro-inset {
+		border-style: solid;
+		border-width: 1px;
+		border-top-color: color-mix(in oklch, var(--gray) 30%, black);
+		border-left-color: color-mix(in oklch, var(--gray) 30%, black);
+		border-bottom-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+		border-right-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+	}
+
 	.chaos-mail-row {
 		display: block;
-		border-bottom: 1px solid var(--gray-border);
+		border-bottom: 1px dotted color-mix(in oklch, var(--gray-border) 80%, black);
 		background: white;
-		transition: background-color 0.15s ease;
+		font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Tahoma", "Verdana", sans-serif;
+		transition: background-color 0.1s linear;
 
 		&:hover {
-			background: var(--gray-bg);
+			background: color-mix(in oklch, var(--primary) 8%, white);
 		}
 
 		&[data-expanded="true"] {
 			background: var(--gray-bg);
-			border-left: 3px solid var(--primary);
+			@include retro-inset;
+			border-top: none;
+			border-left-width: 2px;
 
 			.chaos-mail-indicator {
 				color: var(--primary);
@@ -175,8 +232,8 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 		}
 
 		&:focus-within {
-			outline: 2px solid var(--primary);
-			outline-offset: -2px;
+			outline: 1px dashed var(--primary);
+			outline-offset: -1px;
 		}
 	}
 
@@ -193,30 +250,30 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 		color: inherit;
 
 		&:focus-visible {
-			outline: 2px solid var(--primary);
-			outline-offset: -2px;
+			outline: 1px dashed var(--primary);
+			outline-offset: -1px;
 		}
 	}
 
 	.chaos-mail-row-header {
 		display: flex;
 		align-items: flex-start;
-		gap: 12px;
-		padding: 16px 20px;
-		min-height: 80px;
+		gap: 10px;
+		padding: 10px 12px;
+		min-height: 70px;
 
 		@media (max-width: 768px) {
-			padding: 14px 16px;
-			gap: 10px;
+			padding: 8px 10px;
+			gap: 8px;
 		}
 	}
 
 	.chaos-mail-indicator {
 		flex-shrink: 0;
-		margin-top: 4px;
+		margin-top: 2px;
 		color: var(--primary);
-		opacity: 0.6;
-		transition: opacity 0.2s ease, color 0.2s ease;
+		opacity: 0.7;
+		transition: opacity 0.1s linear;
 	}
 
 	.chaos-mail-row[data-expanded="true"] .chaos-mail-indicator {
@@ -228,78 +285,100 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
+		gap: 6px;
 	}
 
 	.chaos-mail-row-top {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: 16px;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+
+	.chaos-mail-title-wrapper {
+		flex: 1;
+		min-width: 200px;
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
 		flex-wrap: wrap;
 	}
 
 	.chaos-mail-title {
 		margin: 0;
-		font-size: 1rem;
+		font-size: 0.9375rem;
 		font-weight: 600;
 		color: var(--gray);
-		line-height: 1.4;
-		flex: 1;
-		min-width: 200px;
+		line-height: 1.3;
+	}
+
+	.chaos-mail-new-label {
+		display: inline-block;
+		padding: 1px 4px;
+		font-size: 0.625rem;
+		font-weight: 700;
+		color: var(--primary);
+		background: var(--secondary);
+		border: 1px solid var(--border);
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		line-height: 1.2;
 	}
 
 	.chaos-mail-date {
 		flex-shrink: 0;
-		font-size: 0.875rem;
+		font-size: 0.75rem;
 		color: var(--gray);
-		opacity: 0.7;
+		opacity: 0.8;
 		white-space: nowrap;
+		font-family: "Courier New", monospace;
 
 		@media (max-width: 768px) {
 			width: 100%;
-			margin-top: 4px;
+			margin-top: 2px;
 		}
 	}
 
 	.chaos-mail-row-meta {
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
+		gap: 4px;
 	}
 
 	.chaos-mail-tags {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 6px;
+		gap: 4px;
 		align-items: center;
 	}
 
 	.chaos-mail-tag {
 		display: inline-block;
-		padding: 2px 8px;
-		font-size: 0.75rem;
-		color: var(--primary);
-		background: var(--secondary);
-		border: 1px solid var(--border);
-		border-radius: 999px;
+		padding: 1px 6px;
+		font-size: 0.6875rem;
+		color: var(--gray);
+		background: var(--gray-bg);
+		@include retro-raised;
 		white-space: nowrap;
+		line-height: 1.4;
 	}
 
 	.chaos-mail-tag-more {
 		display: inline-block;
-		padding: 2px 8px;
-		font-size: 0.75rem;
+		padding: 1px 6px;
+		font-size: 0.6875rem;
 		color: var(--gray);
-		opacity: 0.7;
+		opacity: 0.6;
+		font-family: "Courier New", monospace;
 	}
 
 	.chaos-mail-snippet {
 		margin: 0;
-		font-size: 0.875rem;
+		font-size: 0.8125rem;
 		color: var(--gray);
-		opacity: 0.8;
-		line-height: 1.5;
+		opacity: 0.85;
+		line-height: 1.4;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
@@ -308,52 +387,53 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 
 	.chaos-mail-expand-icon {
 		flex-shrink: 0;
-		margin-top: 4px;
+		margin-top: 2px;
 		color: var(--gray);
-		opacity: 0.5;
-		transition: transform 0.3s ease, opacity 0.2s ease;
+		opacity: 0.6;
+		transition: transform 0.2s ease-out, opacity 0.1s linear;
 	}
 
 	.chaos-mail-row:hover .chaos-mail-expand-icon {
-		opacity: 0.8;
+		opacity: 0.9;
 	}
 
-	// Expanded content
+	// Expanded content (preview pane)
 	.chaos-mail-expanded {
 		overflow: hidden;
 		max-height: 0;
 		opacity: 0;
 		pointer-events: none;
-		transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-			opacity 0.3s ease,
-			padding 0.3s ease;
+		transition: max-height 0.25s ease-out,
+			opacity 0.2s ease-out,
+			padding 0.25s ease-out;
 
 		&[aria-hidden="false"] {
 			max-height: 2000px;
 			opacity: 1;
 			pointer-events: auto;
-			padding: 0 20px 20px 20px;
+			padding: 0 12px 12px 12px;
 
 			@media (max-width: 768px) {
-				padding: 0 16px 16px 16px;
+				padding: 0 10px 10px 10px;
 			}
 		}
 	}
 
 	.chaos-mail-expanded-inner {
-		padding-top: 16px;
-		border-top: 1px solid var(--gray-border);
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		gap: 12px;
+		background: var(--gray-bg);
+		@include retro-inset;
+		padding: 10px;
+		margin-top: 8px;
 	}
 
 	.chaos-mail-cover {
 		width: 100%;
 		max-width: 500px;
-		border-radius: 8px;
 		overflow: hidden;
-		border: 1px solid var(--gray-border);
+		@include retro-inset;
 
 		img {
 			width: 100%;
@@ -365,80 +445,121 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 
 	.chaos-mail-description {
 		margin: 0;
-		font-size: 0.9375rem;
+		font-size: 0.875rem;
 		color: var(--gray);
-		line-height: 1.6;
+		line-height: 1.5;
+	}
+
+	.chaos-mail-preview-header {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 8px;
+		background: white;
+		@include retro-inset;
+		font-size: 0.75rem;
+		font-family: "Courier New", monospace;
+	}
+
+	.chaos-mail-header-row {
+		display: flex;
+		gap: 8px;
+		line-height: 1.4;
+	}
+
+	.chaos-mail-header-label {
+		font-weight: 700;
+		color: var(--gray);
+		text-transform: uppercase;
+		min-width: 50px;
+	}
+
+	.chaos-mail-header-value {
+		color: var(--gray);
+		flex: 1;
 	}
 
 	.chaos-mail-expanded-meta {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
-		padding-top: 8px;
+		gap: 10px;
+		padding-top: 4px;
 	}
 
 	.chaos-mail-tags-full {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 8px;
+		gap: 4px;
 	}
 
 	.chaos-mail-meta-row {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 16px;
+		gap: 12px;
 		align-items: center;
+		font-size: 0.75rem;
+		color: var(--gray);
+		font-family: "Courier New", monospace;
 	}
 
 	.chaos-mail-meta-item {
 		display: flex;
 		align-items: center;
-		gap: 6px;
-		font-size: 0.8125rem;
+		gap: 4px;
 		color: var(--gray);
-		opacity: 0.8;
+		opacity: 0.85;
 
 		svg {
 			flex-shrink: 0;
-			color: var(--primary);
+			color: var(--gray);
 			opacity: 0.7;
 		}
+	}
+
+	.chaos-mail-doc-icon {
+		margin-left: auto;
+		color: var(--gray);
+		opacity: 0.6;
 	}
 
 	.chaos-mail-more-link {
 		display: inline-flex;
 		align-items: center;
-		gap: 6px;
+		gap: 4px;
 		width: fit-content;
-		padding: 8px 16px;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: var(--primary);
-		background: var(--secondary);
-		border: 1px solid var(--border);
-		border-radius: 6px;
+		padding: 4px 12px;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--gray);
+		background: var(--gray-bg);
+		@include retro-raised;
 		text-decoration: none;
-		transition: all 0.2s ease;
+		transition: all 0.1s linear;
+		cursor: pointer;
 
-		&:hover,
-		&:focus-visible {
-			background: var(--primary);
-			color: white;
-			transform: translateY(-1px);
-			box-shadow: 0 2px 8px color-mix(in oklch, var(--primary) 20%, transparent);
+		&:hover {
+			@include retro-inset;
+		}
+
+		&:active {
+			@include retro-inset;
+			padding-top: 5px;
+			padding-left: 13px;
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--primary);
+			outline: 1px dashed var(--primary);
 			outline-offset: 2px;
 		}
 
 		svg {
-			transition: transform 0.2s ease;
+			width: 10px;
+			height: 10px;
+			transition: transform 0.1s linear;
 		}
 
 		&:hover svg {
-			transform: translateX(2px);
+			transform: translateX(1px);
 		}
 	}
 </style>
@@ -452,8 +573,16 @@ const readingTime = frontmatter.readingTime || estimateReadingTime(preview || ''
 		rows.forEach((row) => {
 			const toggle = row.querySelector('.chaos-mail-row-toggle');
 			const expanded = row.querySelector('.chaos-mail-expanded');
+			const moreLink = row.querySelector('.chaos-mail-more-link');
 			
 			if (!toggle || !expanded) return;
+
+			// Prevent "More" link from toggling the row
+			if (moreLink) {
+				moreLink.addEventListener('click', (e) => {
+					e.stopPropagation();
+				});
+			}
 
 			toggle.addEventListener('click', (e) => {
 				// Don't toggle if clicking the "More" link

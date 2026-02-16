@@ -14,35 +14,169 @@ const sortedPosts = allPosts.sort((a: any, b: any) => {
 
 <BaseLayout pageTitle={'Blog'}>
 	<style lang="scss">
+		// Retro Windows 98 beveled border helpers
+		@mixin retro-raised {
+			border-style: solid;
+			border-width: 1px;
+			border-top-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+			border-left-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+			border-bottom-color: color-mix(in oklch, var(--gray) 30%, black);
+			border-right-color: color-mix(in oklch, var(--gray) 30%, black);
+		}
+
+		@mixin retro-inset {
+			border-style: solid;
+			border-width: 1px;
+			border-top-color: color-mix(in oklch, var(--gray) 30%, black);
+			border-left-color: color-mix(in oklch, var(--gray) 30%, black);
+			border-bottom-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+			border-right-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+		}
+
 		.chaos-mail-inbox {
 			grid-column: 1 / 25;
 			padding-top: 36px;
 			max-width: 100%;
+			font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Tahoma", "Verdana", sans-serif;
 
 			@media (max-width: 768px) {
 				padding-top: 20px;
 			}
 		}
 
-		.chaos-mail-inbox-header {
-			margin-bottom: 24px;
-			padding-bottom: 12px;
-			border-bottom: 2px solid var(--gray-border);
+		.chaos-browser-window {
+			display: flex;
+			flex-direction: column;
+			background: var(--gray-bg);
+			@include retro-raised;
+			border-width: 2px;
+		}
 
-			h1 {
-				margin: 0;
-				font-size: 1.5rem;
-				font-weight: 600;
-				color: var(--gray);
+		.chaos-browser-titlebar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 4px 6px;
+			background: linear-gradient(
+				to bottom,
+				color-mix(in oklch, var(--primary) 15%, white),
+				color-mix(in oklch, var(--primary) 8%, white)
+			);
+			border-bottom: 1px solid color-mix(in oklch, var(--gray) 20%, black);
+			font-size: 0.75rem;
+			font-weight: 600;
+			color: var(--gray);
+			min-height: 22px;
+
+			&-title {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				flex: 1;
+
+				svg {
+					width: 14px;
+					height: 14px;
+					color: var(--primary);
+				}
 			}
 
-			@media (max-width: 768px) {
-				margin-bottom: 16px;
-				padding-bottom: 8px;
+			&-buttons {
+				display: flex;
+				gap: 2px;
+			}
 
-				h1 {
-					font-size: 1.25rem;
+			&-button {
+				width: 16px;
+				height: 14px;
+				padding: 0;
+				border: none;
+				background: var(--gray-bg);
+				@include retro-raised;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 10px;
+				color: var(--gray);
+				line-height: 1;
+
+				&:active {
+					@include retro-inset;
 				}
+
+				&:hover {
+					background: color-mix(in oklch, var(--gray-bg) 90%, var(--primary));
+				}
+			}
+		}
+
+		.chaos-browser-toolbar {
+			display: flex;
+			align-items: center;
+			gap: 2px;
+			padding: 4px 6px;
+			background: var(--gray-bg);
+			border-bottom: 1px solid color-mix(in oklch, var(--gray-border) 80%, black);
+		}
+
+		.chaos-browser-button {
+			padding: 3px 8px;
+			font-size: 0.6875rem;
+			font-weight: 600;
+			color: var(--gray);
+			background: var(--gray-bg);
+			@include retro-raised;
+			border: none;
+			cursor: default;
+			white-space: nowrap;
+
+			&:disabled {
+				@include retro-inset;
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+
+			&:not(:disabled):hover {
+				background: color-mix(in oklch, var(--gray-bg) 95%, var(--primary));
+			}
+
+			&:not(:disabled):active {
+				@include retro-inset;
+			}
+		}
+
+		.chaos-browser-addressbar {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			padding: 4px 6px;
+			background: white;
+			border-bottom: 1px solid color-mix(in oklch, var(--gray-border) 80%, black);
+		}
+
+		.chaos-browser-address-label {
+			font-size: 0.6875rem;
+			font-weight: 600;
+			color: var(--gray);
+			white-space: nowrap;
+		}
+
+		.chaos-browser-address-input {
+			flex: 1;
+			padding: 2px 6px;
+			font-size: 0.75rem;
+			font-family: "Courier New", monospace;
+			color: var(--gray);
+			background: white;
+			@include retro-inset;
+			border: none;
+			outline: none;
+			min-width: 0;
+
+			&:focus {
+				outline: 1px dashed var(--primary);
+				outline-offset: -1px;
 			}
 		}
 
@@ -50,13 +184,9 @@ const sortedPosts = allPosts.sort((a: any, b: any) => {
 			display: flex;
 			flex-direction: column;
 			background: white;
-			border: 1px solid var(--gray-border);
-			border-radius: 8px;
-			overflow: hidden;
-			box-shadow: 0 1px 3px color-mix(in oklch, var(--gray) 8%, transparent);
+			min-height: 200px;
 
 			@media (max-width: 768px) {
-				border-radius: 0;
 				border-left: none;
 				border-right: none;
 			}
@@ -67,25 +197,61 @@ const sortedPosts = allPosts.sort((a: any, b: any) => {
 			text-align: center;
 			color: var(--gray);
 			opacity: 0.6;
-			font-size: 0.9375rem;
+			font-size: 0.875rem;
+			font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Tahoma", "Verdana", sans-serif;
 		}
 	</style>
 
 	<div class="chaos-mail-inbox">
-		<header class="chaos-mail-inbox-header">
-			<h1>Blog</h1>
-		</header>
+		<div class="chaos-browser-window">
+			<!-- Title bar -->
+			<div class="chaos-browser-titlebar">
+				<div class="chaos-browser-titlebar-title">
+					<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+						<rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1" />
+						<path d="M2 6h12M6 2v12M10 2v12" stroke="currentColor" stroke-width="1" />
+					</svg>
+					<span>Chaosland Browser</span>
+				</div>
+				<div class="chaos-browser-titlebar-buttons">
+					<button class="chaos-browser-titlebar-button" aria-label="Minimize" title="Minimize">_</button>
+					<button class="chaos-browser-titlebar-button" aria-label="Maximize" title="Maximize">□</button>
+					<button class="chaos-browser-titlebar-button" aria-label="Close" title="Close">×</button>
+				</div>
+			</div>
 
-		{sortedPosts.length > 0 ? (
-			<div class="chaos-mail-list" role="list">
-				{sortedPosts.map((post: any) => (
-					<BlogPost post={post} />
-				))}
+			<!-- Toolbar -->
+			<div class="chaos-browser-toolbar">
+				<button class="chaos-browser-button" disabled aria-label="Back">◄ Back</button>
+				<button class="chaos-browser-button" disabled aria-label="Forward">Forward ►</button>
+				<button class="chaos-browser-button" disabled aria-label="Refresh">⟳ Refresh</button>
+				<button class="chaos-browser-button" disabled aria-label="Home">⌂ Home</button>
 			</div>
-		) : (
-			<div class="chaos-mail-empty">
-				No posts yet. Check back soon!
+
+			<!-- Address bar -->
+			<div class="chaos-browser-addressbar">
+				<span class="chaos-browser-address-label">Address:</span>
+				<input 
+					type="text" 
+					class="chaos-browser-address-input" 
+					value="https://chaosland.blog/" 
+					readonly
+					aria-label="Address bar"
+				/>
 			</div>
-		)}
+
+			<!-- Content area -->
+			{sortedPosts.length > 0 ? (
+				<div class="chaos-mail-list" role="list">
+					{sortedPosts.map((post: any) => (
+						<BlogPost post={post} />
+					))}
+				</div>
+			) : (
+				<div class="chaos-mail-empty">
+					No posts yet. Check back soon!
+				</div>
+			)}
+		</div>
 	</div>
 </BaseLayout>
