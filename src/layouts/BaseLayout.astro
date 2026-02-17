@@ -21,8 +21,13 @@ const {pageTitle} = Astro.props;
             gap: 36px;
 
             padding: 12px;
+            padding-top: 100px; // Space for fixed browser header (titlebar + toolbar + addressbar)
 
             min-height: 100vh;
+
+            @media (max-width: 768px) {
+              padding-top: 90px;
+            }
           }
             .chaos-wrapper{
               display: grid;
