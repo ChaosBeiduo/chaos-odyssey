@@ -101,20 +101,7 @@ const isNew = frontmatter.pubDate
 		aria-hidden="true"
 	>
 		<div class="chaos-mail-expanded-inner">
-			{frontmatter.image?.url && (
-				<div class="chaos-mail-cover">
-					<img 
-						src={frontmatter.image.url} 
-						alt={frontmatter.image.alt || frontmatter.title}
-						loading="lazy"
-					/>
-				</div>
-			)}
-
-			{frontmatter.description && (
-				<p class="chaos-mail-description">{frontmatter.description}</p>
-			)}
-
+			
 			<div class="chaos-mail-expanded-meta">
 				<div class="chaos-mail-preview-header">
 					<div class="chaos-mail-header-row">
@@ -127,23 +114,25 @@ const isNew = frontmatter.pubDate
 							<span class="chaos-mail-header-value">{pubDate}</span>
 						</div>
 					)}
-					{tags.length > 0 && (
+					{frontmatter.description && (
 						<div class="chaos-mail-header-row">
-							<span class="chaos-mail-header-label">TAGS:</span>
+							<span class="chaos-mail-header-label">DESCRIPTION:</span>
 							<span class="chaos-mail-header-value">
-								{tags.join(', ')}
+								{frontmatter.description}
 							</span>
 						</div>
 					)}
-				</div>
 
-				{tags.length > 0 && (
-					<div class="chaos-mail-tags-full">
-						{tags.map((tag: string) => (
-							<span class="chaos-mail-tag">{tag}</span>
-						))}
-					</div>
-				)}
+					{frontmatter.image?.url && (
+						<div class="chaos-mail-cover">
+							<img
+								src={frontmatter.image.url}
+								alt={frontmatter.image.alt || frontmatter.title}
+								loading="lazy"
+							/>
+						</div>
+					)}
+				</div>
 
 				<div class="chaos-mail-meta-row">
 					{readingTime > 0 && (
@@ -400,15 +389,12 @@ const isNew = frontmatter.pubDate
 	// Expanded content (preview pane)
 	.chaos-mail-expanded {
 		overflow: hidden;
-		max-height: 0;
+		height: 0;
 		opacity: 0;
 		pointer-events: none;
-		transition: max-height 0.25s ease-out,
-			opacity 0.2s ease-out,
-			padding 0.25s ease-out;
 
 		&[aria-hidden="false"] {
-			max-height: 2000px;
+			height: fit-content;
 			opacity: 1;
 			pointer-events: auto;
 			padding: 0 12px 12px 12px;
@@ -471,7 +457,6 @@ const isNew = frontmatter.pubDate
 		font-weight: 700;
 		color: var(--gray);
 		text-transform: uppercase;
-		min-width: 50px;
 	}
 
 	.chaos-mail-header-value {
