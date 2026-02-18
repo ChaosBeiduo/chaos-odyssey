@@ -33,24 +33,20 @@ const currentUrl = Astro.url.pathname === '/'
 
 		<!-- Toolbar -->
 		<div class="chaos-browser-toolbar">
-			<button class="chaos-browser-button" disabled aria-label="Back">◄ Back</button>
-			<button class="chaos-browser-button" disabled aria-label="Forward">Forward ►</button>
-			<button class="chaos-browser-button" disabled aria-label="Refresh">⟳ Refresh</button>
-			<button class={`chaos-browser-button ${isActive('/')}`} aria-label="Home">
-                <a href="/">
-                    <i class="fa-solid fa-house"></i> Home
-                </a>
-            </button>
-            <button class={`chaos-browser-button ${isActive('/about/')}`} aria-label="About me">
-                <a href="/about/">
-                    <i class="fa-regular fa-face-meh"></i> About me
-                </a>
-            </button>
+			<button class="chaos-browser-button" disabled aria-label="Back"><i class="fa-solid fa-angle-left"></i> Back</button>
+			<button class="chaos-browser-button" disabled aria-label="Forward">Forward <i class="fa-solid fa-angle-right"></i></button>
+			<button class="chaos-browser-button" disabled aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+			<a class={`chaos-browser-button ${isActive('/')}`} aria-label="Home" href="/">
+				<i class="fa-solid fa-house"></i> Home
+            </a>
+            <a class={`chaos-browser-button ${isActive('/about/')}`} aria-label="About me" href="/about/">
+				<i class="fa-regular fa-face-meh"></i> About me
+            </a>
 		</div>
 
 		<!-- Address bar -->
 		<div class="chaos-browser-addressbar">
-			<span class="chaos-browser-address-label">Address:</span>
+			<span class="chaos-browser-address-label"><i class="fa-solid fa-circle-info"></i></span>
 			<input 
 				type="text" 
 				class="chaos-browser-address-input" 
