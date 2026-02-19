@@ -39,6 +39,9 @@ const currentUrl = Astro.url.pathname === '/'
 			<a class={`chaos-browser-button ${isActive('/')}`} aria-label="Home" href="/">
 				<i class="fa-solid fa-house"></i> Home
             </a>
+			<a class={`chaos-browser-button ${isActive('/work/')}`} aria-label="Work" href="/work/">
+				<i class="fa-solid fa-folder-closed"></i> Work
+			</a>
             <a class={`chaos-browser-button ${isActive('/about/')}`} aria-label="About me" href="/about/">
 				<i class="fa-regular fa-face-meh"></i> About me
             </a>
