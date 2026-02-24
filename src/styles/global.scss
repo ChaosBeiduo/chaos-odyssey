@@ -51,19 +51,16 @@ a {
     counter-reset: figureCounter;
 
     a {
-        color: var(--primary);
         display: inline-block;
         
         text-decoration: underline;
         text-decoration-color: var(--border);
         text-underline-offset: 4px;
 
-        transform: skewX(-15deg);
-        transition: transform 0.3s ease;
+        transition: all 0.3s ease;
 
         &:hover {
-            transform: skewX(0deg);
-            opacity: 0.8;
+            background: var(--border);
         }
     }
     
