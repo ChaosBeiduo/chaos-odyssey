@@ -1,0 +1,17 @@
+@mixin retro-raised {
+    border-style: solid;
+    border-width: 1px;
+    border-top-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+    border-left-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+    border-bottom-color: color-mix(in oklch, var(--gray) 30%, black);
+    border-right-color: color-mix(in oklch, var(--gray) 30%, black);
+}
+
+@mixin retro-inset {
+    border-style: solid;
+    border-width: 1px;
+    border-top-color: color-mix(in oklch, var(--gray) 30%, black);
+    border-left-color: color-mix(in oklch, var(--gray) 30%, black);
+    border-bottom-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+    border-right-color: color-mix(in oklch, var(--gray-bg) 100%, white);
+}
