@@ -6,28 +6,54 @@ const websiteWorks = [
     {
         title: "Pachinko Sphere",
         description: "A 3D lottery drawing application built with Astro and Three.js. Features a beautiful \"sphere of names\" that spins and selects winners with smooth animations.",
-        image: "/images/pagination-amazon.png",
+        image: "/images/Projects/pachinko-sphere.png",
         url: "https://pachinko-sphere.vercel.app/",
         technologies: ["Astro", "TypeScript", "Three.js"]
     },
 ];
 
-const photoWorks = [
-    { src: "https://picsum.photos/id/10/400/600", alt: "Nature" },
-    { src: "https://picsum.photos/id/11/400/600", alt: "Nature" },
-    { src: "https://picsum.photos/id/12/400/600", alt: "Nature" },
-    { src: "https://picsum.photos/id/13/400/600", alt: "Nature" },
-    { src: "https://picsum.photos/id/14/400/600", alt: "Nature" },
-    { src: "https://picsum.photos/id/15/400/600", alt: "Nature" },
-];
+const generateGallery = () => {
+    // 扫描目录
+    const modules = import.meta.glob('../../public/images/Gallery/*.{jpeg,jpg,png,webp}', { eager: true });
+
+    return Object.keys(modules).map(path => {
+        // 提取带后缀的文件名，例如 "2026-02-20_outskirt"
+        const fullFileName = path.split('/').pop().split('.')[0];
+
+        // 使用下划线拆分
+        // [0] 是 2026-02-20, [1] 是 outskirt
+        const parts = fullFileName.split('_');
+        const datePart = parts[0] || '';
+        const titlePart = parts[1] || 'Untitled'; // 如果没有下划线，显示 Untitled
+
+        return {
+            // 浏览器访问路径
+            src: path.replace('./public', ''),
+            // 转换为 2026.02.20 展示格式
+            date: datePart.replace(/-/g, '.'),
+            // 首字母大写处理 (outskirt -> Outskirt)
+            desc: titlePart.charAt(0).toUpperCase() + titlePart.slice(1)
+        };
+    });
+};
+
+// 排序逻辑保持不变
+const photoWorks = generateGallery().sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+});
 ---
 
 <BaseLayout pageTitle={'Work'}>
+    <!-- Google Font for Hand-written style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+
     <div class="work-container">
-        <!--  1. 网站作品集  -->
+        <!--  1. 作品集  -->
         <section class="website-portfolio">
             <div class="section-header">
-                <h2 class="section-title">Web Portfolio</h2>
+                <h2 class="section-title">Projects</h2>
             </div>
             <div class="website-grid">
                 {websiteWorks.map(work => (
@@ -39,17 +65,17 @@ const photoWorks = [
         <!--  2. 摄影作品集  -->
         <section class="photo-portfolio">
             <div class="section-header">
-                <h2 class="section-title">Photography Album</h2>
-                <div class="photo-controls">
-                    <button id="scatter-btn" class="retro-btn">Scatter Photos</button>
-                    <button id="flip-btn" class="retro-btn">Next Photo</button>
-                </div>
+                <h2 class="section-title">Photography Gallery</h2>
             </div>
-            <div class="album-container" id="photo-album">
+            <div class="polaroid-gallery">
                 {photoWorks.map((photo, index) => (
-                    <div class="photo-item" style={`--index: ${index}; --total: ${photoWorks.length};`}>
-                        <div class="photo-inner">
-                            <img src={photo.src} alt={photo.alt} loading="lazy" />
+                    <div class="polaroid-item" style={`--rotation: ${(index % 3 - 1) * (Math.random() * 5 + 2)}deg;`}>
+                        <div class="polaroid-inner">
+                            <img src={photo.src} alt={photo.desc} loading="lazy" />
+                            <div class="polaroid-caption grid text-end">
+                                {photo.desc && <span>{photo.desc}</span>}
+                                <span>{photo.date}</span>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -58,82 +84,6 @@ const photoWorks = [
     </div>
 </BaseLayout>
 
-<script>
-    const album = document.getElementById('photo-album');
-    const scatterBtn = document.getElementById('scatter-btn');
-    const flipBtn = document.getElementById('flip-btn');
-    
-    let isScattered = false;
-    let currentIndex = 0;
-    const totalPhotos = 6; // Matching photoWorks.length
-
-    function updateAlbum() {
-        const photos = document.querySelectorAll('.photo-item');
-        photos.forEach((photo, index) => {
-            const el = photo as HTMLElement;
-            if (isScattered) {
-                // Scatter logic - stay scattered
-                return;
-            }
-            
-            // Stack logic
-            const relativeIndex = (index - currentIndex + totalPhotos) % totalPhotos;
-            el.style.zIndex = (totalPhotos - relativeIndex).toString();
-            
-            if (relativeIndex === 0) {
-                el.style.transform = 'rotate(0deg) translate(0, 0)';
-                el.style.opacity = '1';
-            } else {
-                const rotate = (relativeIndex * 2);
-                const offset = (relativeIndex * 4);
-                el.style.transform = `rotate(${rotate}deg) translate(${offset}px, ${offset}px)`;
-                el.style.opacity = relativeIndex > 3 ? '0' : '1';
-            }
-        });
-    }
-
-    scatterBtn?.addEventListener('click', () => {
-        isScattered = !isScattered;
-        const photos = document.querySelectorAll('.photo-item');
-        scatterBtn.textContent = isScattered ? 'Stack Photos' : 'Scatter Photos';
-        
-        if (flipBtn) (flipBtn as HTMLButtonElement).disabled = isScattered;
-
-        photos.forEach((photo, index) => {
-            const el = photo as HTMLElement;
-            if (isScattered) {
-                const angle = Math.random() * 40 - 20;
-                const x = (Math.random() - 0.5) * (window.innerWidth * 0.6);
-                const y = (Math.random() - 0.5) * 400;
-                el.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-                el.style.zIndex = (100 + index).toString();
-                el.style.opacity = '1';
-            } else {
-                updateAlbum();
-            }
-        });
-    });
-
-    flipBtn?.addEventListener('click', () => {
-        if (isScattered) return;
-        
-        const photos = document.querySelectorAll('.photo-item');
-        const currentPhoto = photos[currentIndex] as HTMLElement;
-        
-        // Animation for flipping
-        currentPhoto.style.transform = 'translateX(-120%) rotate(-20deg)';
-        currentPhoto.style.opacity = '0';
-        
-        setTimeout(() => {
-            currentIndex = (currentIndex + 1) % totalPhotos;
-            updateAlbum();
-        }, 300);
-    });
-
-    // Initial state
-    updateAlbum();
-</script>
-
 <style lang="scss">
     @use '../styles/_mixins.scss' as *;
 
@@ -141,7 +91,7 @@ const photoWorks = [
         grid-column: 1 / 25;
         display: flex;
         flex-direction: column;
-        gap: 64px;
+        gap: 80px;
         padding-top: 36px;
         padding-bottom: 100px;
     }
@@ -152,14 +102,10 @@ const photoWorks = [
         align-items: center;
         flex-wrap: wrap;
         gap: 16px;
-      
-        margin-bottom: 24px;
+        margin-bottom: 32px;
         padding-bottom: 8px;
-      
         width: 100%;
-      
         border-bottom: 2px solid var(--secondary);
-        
     }
 
     .section-title {
@@ -168,74 +114,59 @@ const photoWorks = [
         margin: 0;
     }
 
-    .photo-controls {
-        display: flex;
-        gap: 8px;
-    }
-
-    .retro-btn {
-        padding: 4px 12px;
-        background: var(--gray-bg);
-        @include retro-raised;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--gray);
-        cursor: pointer;
-
-        &:active:not(:disabled) {
-            @include retro-inset;
-        }
-
-        &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    }
-
     .website-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 32px;
     }
 
-    .photo-portfolio {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 600px;
+    /* Polaroid Styles */
+    .polaroid-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 32px;
+        padding: 20px 0;
+        justify-items: center;
+        width: 100%;
     }
 
-    .album-container {
+    .polaroid-item {
+        transform: rotate(var(--rotation));
+        transition: transform 0.3s ease, z-index 0s;
+        
+        &:hover {
+            transform: rotate(0deg);
+            z-index: 10;
+        }
+    }
+
+    .polaroid-inner {
+        background: #fdfdfd;
+        padding: 6px;
+        padding-bottom: 12px;
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+        width: 280px;
         position: relative;
-        width: 320px;
-        height: 440px;
-        margin-top: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .photo-item {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s, z-index 0s;
-        pointer-events: none;
-    }
-
-    .photo-inner {
-        width: 100%;
-        height: 100%;
-        background: white;
-        padding: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-        pointer-events: auto;
 
         img {
             width: 100%;
-            height: 100%;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 12px;
         }
+    }
+
+    .polaroid-caption {
+        padding: 0 4px;
+        transform: rotate(-2deg);
+
+      span{
+        font-family: 'Caveat', cursive;
+        font-size: 1.5rem;
+        color: #333;
+        line-height: 1.2;
+      }
     }
 
     @media (max-width: 768px) {
@@ -243,9 +174,9 @@ const photoWorks = [
             grid-template-columns: 1fr;
         }
 
-        .album-container {
-            width: 280px;
-            height: 380px;
+        .polaroid-gallery {
+            grid-template-columns: 1fr;
+            gap: 40px;
         }
     }
 </style>
