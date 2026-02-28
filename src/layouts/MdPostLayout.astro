@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-const { frontmatter } = Astro.props;
+const { frontmatter, headings } = Astro.props;
 ---
 
 <style lang="scss">
@@ -74,6 +74,42 @@ const { frontmatter } = Astro.props;
             border-radius: 3px;
             border: 1px dotted lightgray;
             background: #f8f8f8;
+          }
+        }
+      }
+
+      &-toc{
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-column: 1/-1;
+
+        padding: 12px 0;
+
+        ul{
+          grid-column: 1 / -1;
+          list-style: none;
+
+          li{
+            padding: 6px 0;
+            border-bottom: 1px dotted #eee;
+
+            &.depth-2{
+              padding-left: 12px;
+            }
+            &.depth-3{
+              padding-left: 24px;
+            }
+            
+            a{
+              color: #666;
+              font-size: .9rem;
+              text-decoration: none;
+
+              &:hover{
+                color: #000;
+                text-decoration: underline;
+              }
+            }
           }
         }
       }
@@ -158,6 +194,26 @@ const { frontmatter } = Astro.props;
                     </span>
                 </div>
             </div>
+
+            {headings && headings.length > 0 && (
+                <>
+                    <div class="chaos-table-header mt-8">
+                        <div class="chaos-table-header-label">
+                            <span>/</span>
+                            TOC
+                        </div>
+                    </div>
+                    <nav class="chaos-post-sidebar-toc">
+                        <ul>
+                            {headings.filter((h: any) => h.depth <= 3).map((heading: any) => (
+                                <li class={`depth-${heading.depth}`}>
+                                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                </>
+            )}
         </aside>
         <main class="chaos-post-content">
             <div class="chaos-table-header">
