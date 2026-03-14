@@ -5,7 +5,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <style lang="scss">
 	.chaos-about {
 		grid-column: 1 / 25;
-		padding-top: 36px;
 
 		a {
 			text-decoration: underline;
@@ -41,7 +40,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			&-border{
 				border-radius: 50%;
 				border: 3px solid var(--border);
-				box-shadow: 6px 6px 0 var(--secondary);
+				box-shadow: 6px 6px 0 var(--bg);
 			}
 
 			img {
@@ -52,9 +51,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 		}
 
 		&-intro {
-			text-align: center;
-			font-weight: lighter;
-
 			@media (min-width: 1024px) {
 				text-align: left;
 			}
@@ -65,31 +61,26 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 			h1 {
 				margin: unset;
-				color: var(--primary);
-				font-weight: lighter;
 
 				span {
 					font-size: 1.5rem;
 				}
+			}
+
+			a:hover{
+				color: var(--primary);
 			}
 			
 			&-quote{
 				padding: 0 6px;
 				width: fit-content;
 				
-				color: var(--gray);
-				background: var(--gray-bg);
+				background: var(--bg);
 			}
 		}
 
 		highlight {
 			color: var(--primary);
-		}
-
-		h3,
-		ul,
-		p {
-			margin: unset;
 		}
 
 		h3 {
@@ -125,10 +116,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 		&-card {
 			display: flex;
 			flex-direction: column;
+			gap: 6px;
 			min-height: 120px;
 			padding: 16px;
-			background: var(--gray-bg);
-			border: 1px solid var(--gray-border);
+			background: var(--secondary-bg);
+			border: 1px solid var(--secondary-border);
 			border-radius: 12px;
 
 			&:focus-visible {
@@ -138,12 +130,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 			.chaos-about-card-icon {
 				align-self: flex-start;
-				margin-bottom: 10px;
 				transform: rotate(-2deg);
 			}
 
 			.chaos-about-card-title {
-				margin: 0 0 4px 0;
+				margin: 0;
 				font-size: 1rem;
 				font-weight: 600;
 				color: var(--gray);
@@ -159,32 +150,29 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			}
 		}
 
-		// ----- Hobby card with badge -----
 		&-card-badge {
 			display: inline-block;
-			margin-top: 6px;
+			white-space: nowrap;
 			padding: 2px 8px;
 			width: fit-content;
 			font-size: 0.7rem;
 			color: var(--primary);
-			background: var(--secondary);
+			background: var(--bg);
 			border-radius: 999px;
 			border: 1px solid var(--border);
 		}
 
-		// ----- Chips (skills, hobbies) -----
 		&-chips {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 8px;
-			margin-top: 8px;
 		}
 
 		&-chip {
 			padding: 4px 10px;
 			font-size: 0.8rem;
 			color: var(--primary);
-			background: var(--secondary);
+			background: var(--bg);
 			border: 1px solid var(--border);
 			border-radius: 999px;
 		}
@@ -202,7 +190,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			font-size: 0.875rem;
 			font-weight: 500;
 			color: var(--primary);
-			background: var(--secondary);
+			background: var(--bg);
 			border: 1px solid var(--border);
 			border-radius: 999px;
 		}
@@ -213,7 +201,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			margin-top: 16px;
 			max-width: 360px;
 			padding: 14px 18px 18px 18px;
-			background: var(--secondary);
+			background: var(--bg);
 			border: 1px solid var(--border);
 			border-radius: 4px;
 			font-size: 0.875rem;
@@ -240,7 +228,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 				height: 0;
 				border-style: solid;
 				border-width: 0 18px 18px 0;
-				border-color: transparent var(--secondary) transparent transparent;
+				border-color: transparent var(--bg) transparent transparent;
 			}
 		}
 
@@ -252,7 +240,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			width: 40px;
 			height: 40px;
 			border-radius: 10px;
-			background: var(--secondary);
+			background: var(--bg);
 			border: 1px solid var(--border);
 			color: var(--primary);
 		}
@@ -280,9 +268,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 				</div>
 			</div>
 
-			<div class="chaos-about-intro grid gap-2">
+			<div class="chaos-about-intro grid gap-2 font-light text-gray-500">
 				<div class="grid gap-1">
-					<small class="text-gray-500">
+					<small>
 						Software Engineer at FORETA ·
 						Previously Front-End Developer at
 						<a href="https://www.tsbiochem.com/">TOPSCIENCE</a>
@@ -347,15 +335,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 						<a class="chaos-about-card-badge" href="https://en.wikipedia.org/wiki/Jean-Luc_Godard">Jean-Luc Godard</a>
 					</div>
 				</article>
-
-				<!-- Ramen -->
-				<article class="chaos-about-card" tabindex="0">
-					<div class="chaos-about-card-icon chaos-about-icon-wrap" aria-hidden="true">
-						<i class="fa-solid fa-utensils"></i>
-					</div>
-					<h3 class="chaos-about-card-title">Ramen</h3>
-					<p class="chaos-about-card-desc">Ramen is life.</p>
-				</article>
 			</div>
 		</section>
 
@@ -403,14 +382,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 					</div>
 				</article>
 				<article class="chaos-about-card" tabindex="0">
-					<div class="chaos-about-card-icon chaos-about-icon-wrap" aria-hidden="true">
-						<i class="fa-solid fa-paintbrush"></i>
+					<div class="chaos-about-card-icon chaos-about-icon-wrap p-1" aria-hidden="true">
+						<img src="/favicon.svg"/>
 					</div>
 					<h3 class="chaos-about-card-title">Design</h3>
 					<div class="chaos-about-chips">
 						<span class="chaos-about-chip">Figma</span>
 						<span class="chaos-about-chip">Photoshop</span>
 					</div>
+					<p class="chaos-about-card-desc">I designed the logo for this site myself, with thanks to someone important for the color guidance.</p>
 				</article>
 			</div>
 		</section>

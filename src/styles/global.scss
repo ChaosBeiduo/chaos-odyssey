@@ -1,29 +1,51 @@
+@font-face {
+    font-family: 'Hanken Grotesk';
+    src: url('/fonts/HankenGrotesk-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+}
+
 *{
-    font-family: 'Helvetica', sans-serif;
+    font-family: 'Hanken Grotesk', 'Helvetica', sans-serif;
     box-sizing: border-box;
 }
 
 :root {
-    --primary: hsl(234, 90%, 60%);
-    --secondary: hsla(234, 90%, 60%, 0.1);
-    --border: #0000ff33;
+    --primary: #2776DB;
+    --bg: rgba(39, 118, 219, 0.08);   /* 稍微调低，增加背景清透度 */
+    --border: rgba(39, 118, 219, 0.2); /* 适中的边框强度 */
+    --secondary: #F5F1E6;
+    --secondary-bg: rgba(245, 241, 230, 0.5);
+    --secondary-border: #E8E0CD;
     --gray: hsl(224, 7%, 36%);
     --gray-bg: hsl(224, 19%, 97%);
     --gray-border: hsl(224, 20%, 94%);
 }
 
 html {
-    background-color: white;
+    font-size: 14px;
+    background-color: var(--secondary-bg);
 }
 
-body {
-    margin: 0 auto;
-    padding: 0;
+.chaos-land-is-awesome{
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
 
-    width: 100%;
-    max-width: 80vw;
+    padding-top: 36px;
+    min-height: 100vh;
 
-    line-height: 1.5;
+    @media (max-width: 768px) {
+        padding-top: 90px;
+    }
+}
+.chaos-wrapper{
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    align-items: start;
+
+    flex-grow: 1;
 }
 
 @media (max-width: 768px) {
@@ -125,9 +147,8 @@ a {
         padding: 0.2rem 0.4rem;
         font-size: 0.875em;
         color: var(--primary);
-        background: var(--secondary);
+        background: var(--bg);
         border-radius: 4px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
     
     // Code Blocks (Expressive Code handles most of this, but defaults are good)

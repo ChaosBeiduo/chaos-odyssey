@@ -13,36 +13,12 @@ const {pageTitle} = Astro.props;
         <meta name="generator" content={Astro.generator} />
         <title>ChaosLand: {pageTitle}</title>
         <script src="https://kit.fontawesome.com/3a4af606ad.js" crossorigin="anonymous"></script>
-        
-        <style lang="scss">
-          .chaos-land-is-awesome{
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-
-            padding: 12px;
-            padding-top: 100px; // Space for fixed browser header (titlebar + toolbar + addressbar)
-
-            min-height: 100vh;
-
-            @media (max-width: 768px) {
-              padding-top: 90px;
-            }
-          }
-            .chaos-wrapper{
-              display: grid;
-              grid-template-columns: repeat(24, 1fr);
-              align-items: start;
-
-              flex-grow: 1;
-            }
-        </style>
     </head>
 
     <body>
         <Header />
         
-        <div class="chaos-land-is-awesome">
+        <div class="container mx-auto chaos-land-is-awesome">
             <div class="chaos-wrapper">
                 <slot/>
             </div>
