@@ -28,17 +28,28 @@ html {
     background-color: var(--secondary-bg);
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .chaos-land-is-awesome{
     display: flex;
     flex-direction: column;
+    flex: 1;
     gap: 36px;
 
     padding-top: 36px;
-    min-height: 100vh;
+    padding-bottom: 36px;
 
     @media (max-width: 768px) {
         padding-top: 90px;
     }
+}
+
+.chaos-wrapper {
+    flex: 1;
 }
 
 @media (max-width: 768px) {

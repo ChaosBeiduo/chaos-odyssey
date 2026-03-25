@@ -14,41 +14,34 @@ const sortedPosts = allPosts.sort((a: any, b: any) => {
 
 <BaseLayout pageTitle={'Blog'}>
 	<style lang="scss">
-		.chaos-mail-inbox {
-			grid-column: 1 / 25;
-			max-width: 100%;
+		.blog-list-container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 0 20px;
 		}
 
-		.chaos-mail-list {
+		.blog-list {
 			display: flex;
 			flex-direction: column;
-			background: white;
-			min-height: 200px;
-
-			@media (max-width: 768px) {
-				border-left: none;
-				border-right: none;
-			}
 		}
 
-		.chaos-mail-empty {
-			padding: 48px 20px;
+		.empty-message {
+			padding: 64px 20px;
 			text-align: center;
 			color: var(--gray);
-			opacity: 0.6;
-			font-size: 0.875rem;
+			font-size: 1.125rem;
 		}
 	</style>
 
-	<div class="chaos-mail-inbox">
+	<div class="blog-list-container">
 		{sortedPosts.length > 0 ? (
-			<div class="chaos-mail-list" role="list">
+			<div class="blog-list" role="list">
 				{sortedPosts.map((post: any) => (
 					<BlogPost post={post} />
 				))}
 			</div>
 		) : (
-			<div class="chaos-mail-empty">
+			<div class="empty-message">
 				No posts yet. Check back soon!
 			</div>
 		)}
