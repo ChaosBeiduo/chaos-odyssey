@@ -1,11 +1,10 @@
 ---
 const { post } = Astro.props;
 const frontmatter = post.frontmatter;
-const postId = `post-${post.url?.replace(/[^a-z0-9]/gi, '-') || Math.random().toString(36)}`;
 
-// Extract preview snippet from description or first paragraph
+// Extract preview snippet
 const preview = frontmatter.description || '';
-const previewLength = 120;
+const previewLength = 160;
 const snippet = preview.length > previewLength 
 	? preview.slice(0, previewLength).trim() + '...' 
 	: preview;
@@ -19,595 +18,103 @@ const pubDate = frontmatter.pubDate
 	})
 	: '';
 
-// Tags array
-const tags = frontmatter.tags || [];
-
-// Reading time estimation (rough: ~200 words per minute, ~5 chars per word)
-const estimateReadingTime = (content: string) => {
-	const words = content.length / 5;
-	const minutes = Math.ceil(words / 200);
-	return minutes;
-};
-
-const readingTime = frontmatter.readingTime || estimateReadingTime(preview || '');
-
 // Check if post is new (within last 7 days)
 const isNew = frontmatter.pubDate 
 	? (Date.now() - new Date(frontmatter.pubDate).getTime()) < 7 * 24 * 60 * 60 * 1000
 	: false;
 ---
 
-<article class="chaos-mail-row" data-post-id={postId}>
-	<button 
-		class="chaos-mail-row-toggle"
-		type="button"
-		aria-expanded="false"
-		aria-controls={`${postId}-content`}
-		id={`${postId}-toggle`}
-	>
-		<div class="chaos-mail-row-header">
-			<!-- Left indicator (8-bit pixel dot) -->
-			<div class="chaos-mail-indicator" aria-hidden="true">
-				<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" width="8" height="8">
-					<rect x="2" y="2" width="4" height="4" fill="currentColor" />
-				</svg>
-			</div>
-
-			<!-- Main content area -->
-			<div class="chaos-mail-row-main">
-				<div class="chaos-mail-row-top">
-					<div class="chaos-mail-title-wrapper">
-						<h3 class="chaos-mail-title">{frontmatter.title}</h3>
-						{isNew && (
-							<span class="chaos-mail-new-label">NEW</span>
-						)}
-					</div>
-					<time class="chaos-mail-date" datetime={frontmatter.pubDate?.toString() || ''}>
-						{pubDate}
-					</time>
-				</div>
-
-				<div class="chaos-mail-row-meta">
-					{tags.length > 0 && (
-						<div class="chaos-mail-tags">
-							{tags.slice(0, 3).map((tag: string) => (
-								<span class="chaos-mail-tag">{tag}</span>
-							))}
-							{tags.length > 3 && (
-								<span class="chaos-mail-tag-more">+{tags.length - 3}</span>
-							)}
-						</div>
-					)}
-					{snippet && (
-						<p class="chaos-mail-snippet">{snippet}</p>
-					)}
-				</div>
-			</div>
-
-			<!-- Expand/collapse icon (retro triangle) -->
-			<div class="chaos-mail-expand-icon" aria-hidden="true">
-				<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" width="10" height="10">
-					<polygon points="6,8 2,4 10,4" fill="currentColor" />
-				</svg>
-			</div>
-		</div>
-	</button>
-
-	<!-- Expanded content -->
-	<div 
-		class="chaos-mail-expanded"
-		id={`${postId}-content`}
-		aria-labelledby={`${postId}-toggle`}
-		aria-hidden="true"
-	>
-		<div class="chaos-mail-expanded-inner">
-			
-			<div class="chaos-mail-expanded-meta">
-				<div class="chaos-mail-preview-header">
-					<div class="chaos-mail-header-row">
-						<span class="chaos-mail-header-label">SUBJECT:</span>
-						<span class="chaos-mail-header-value">{frontmatter.title}</span>
-					</div>
-					{pubDate && (
-						<div class="chaos-mail-header-row">
-							<span class="chaos-mail-header-label">DATE:</span>
-							<span class="chaos-mail-header-value">{pubDate}</span>
-						</div>
-					)}
-					{frontmatter.description && (
-						<div class="chaos-mail-header-row">
-							<span class="chaos-mail-header-label">DESCRIPTION:</span>
-							<span class="chaos-mail-header-value">
-								{frontmatter.description}
-							</span>
-						</div>
-					)}
-
-					{frontmatter.image?.url && (
-						<div class="chaos-mail-cover">
-							<img
-								src={frontmatter.image.url}
-								alt={frontmatter.image.alt || frontmatter.title}
-								loading="lazy"
-							/>
-						</div>
-					)}
-				</div>
-
-				<div class="chaos-mail-meta-row">
-					{readingTime > 0 && (
-						<span class="chaos-mail-meta-item">
-							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="12" height="12" aria-hidden="true">
-								<rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1" />
-								<path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1" fill="none" />
-							</svg>
-							{readingTime} min read
-						</span>
-					)}
-					{pubDate && (
-						<span class="chaos-mail-meta-item">
-							<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="12" height="12" aria-hidden="true">
-								<rect x="3" y="3" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1" />
-								<path d="M3 6h10M6 3v3M10 3v3" stroke="currentColor" stroke-width="1" />
-							</svg>
-							Published {pubDate}
-						</span>
-					)}
-					<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="12" height="12" aria-hidden="true" class="chaos-mail-doc-icon">
-								<rect x="4" y="2" width="8" height="12" fill="none" stroke="currentColor" stroke-width="1" />
-								<path d="M4 2v12h8M6 5h4M6 7h4M6 9h3" stroke="currentColor" stroke-width="1" fill="none" />
-							</svg>
-				</div>
-			</div>
-
-			<a 
-				href={post.url} 
-				class="chaos-mail-more-link"
-				aria-label={`Read more: ${frontmatter.title}`}
-			>
-				Read more
-				<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="14" height="14" aria-hidden="true">
-					<path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-				</svg>
-			</a>
-		</div>
+<article class="blog-post-item">
+	<div class="post-header">
+		<h3 class="post-title">
+			<a href={post.url}>{frontmatter.title}</a>
+			{isNew && <span class="new-badge">NEW</span>}
+		</h3>
+		<time class="post-date" datetime={frontmatter.pubDate?.toString() || ''}>
+			{pubDate}
+		</time>
 	</div>
+	{snippet && <p class="post-snippet">{snippet}</p>}
 </article>
 
 <style lang="scss">
-	// Retro Windows 98 beveled border helpers
-	@mixin retro-raised {
-		border-style: solid;
-		border-width: 1px;
-		border-top-color: color-mix(in oklch, var(--gray-bg) 100%, white);
-		border-left-color: color-mix(in oklch, var(--gray-bg) 100%, white);
-		border-bottom-color: color-mix(in oklch, var(--gray) 30%, black);
-		border-right-color: color-mix(in oklch, var(--gray) 30%, black);
-	}
+	.blog-post-item {
+		padding: 24px 0;
+		border-bottom: 1px solid var(--gray-border);
+		transition: transform 0.2s ease;
 
-	@mixin retro-inset {
-		border-style: solid;
-		border-width: 1px;
-		border-top-color: color-mix(in oklch, var(--gray) 30%, black);
-		border-left-color: color-mix(in oklch, var(--gray) 30%, black);
-		border-bottom-color: color-mix(in oklch, var(--gray-bg) 100%, white);
-		border-right-color: color-mix(in oklch, var(--gray-bg) 100%, white);
-	}
-
-	.chaos-mail-row {
-		display: block;
-		border-bottom: 1px dotted color-mix(in oklch, var(--gray-border) 80%, black);
-		background: white;
-		font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Tahoma", "Verdana", sans-serif;
-		transition: background-color 0.1s linear;
+		&:last-child {
+			border-bottom: none;
+		}
 
 		&:hover {
-			background: color-mix(in oklch, var(--primary) 8%, white);
-		}
-
-		&[data-expanded="true"] {
-			background: var(--gray-bg);
-			@include retro-inset;
-			border-top: none;
-			border-left-width: 2px;
-
-			.chaos-mail-indicator {
+			.post-title a {
 				color: var(--primary);
 			}
+		}
+	}
 
-			.chaos-mail-expand-icon {
-				transform: rotate(180deg);
+	.post-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 16px;
+		margin-bottom: 8px;
+
+		@media (max-width: 640px) {
+			flex-direction: column;
+			gap: 4px;
+		}
+	}
+
+	.post-title {
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 600;
+		line-height: 1.4;
+
+		a {
+			color: #000;
+			text-decoration: none;
+			transition: color 0.2s ease;
+
+			&:hover {
+				text-decoration: underline;
+				text-decoration-color: var(--border);
+				text-underline-offset: 4px;
 			}
 		}
-
-		&:focus-within {
-			outline: 1px dashed var(--primary);
-			outline-offset: -1px;
-		}
 	}
 
-	.chaos-mail-row-toggle {
-		width: 100%;
-		padding: 0;
-		margin: 0;
-		border: none;
-		background: none;
-		cursor: pointer;
-		text-align: left;
-		font-family: inherit;
-		font-size: inherit;
-		color: inherit;
-
-		&:focus-visible {
-			outline: 1px dashed var(--primary);
-			outline-offset: -1px;
-		}
-	}
-
-	.chaos-mail-row-header {
-		display: flex;
-		align-items: flex-start;
-		gap: 10px;
-		padding: 10px 12px;
-		min-height: 70px;
-
-		@media (max-width: 768px) {
-			padding: 8px 10px;
-			gap: 8px;
-		}
-	}
-
-	.chaos-mail-indicator {
-		flex-shrink: 0;
-		margin-top: 2px;
-		color: var(--primary);
-		opacity: 0.7;
-		transition: opacity 0.1s linear;
-	}
-
-	.chaos-mail-row[data-expanded="true"] .chaos-mail-indicator {
-		opacity: 1;
-	}
-
-	.chaos-mail-row-main {
-		flex: 1;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	.chaos-mail-row-top {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 12px;
-		flex-wrap: wrap;
-	}
-
-	.chaos-mail-title-wrapper {
-		flex: 1;
-		min-width: 200px;
-		display: flex;
-		align-items: baseline;
-		gap: 8px;
-		flex-wrap: wrap;
-	}
-
-	.chaos-mail-title {
-		margin: 0;
-		font-size: 0.9375rem;
-		font-weight: 600;
-		color: var(--gray);
-		line-height: 1.3;
-	}
-
-	.chaos-mail-new-label {
+	.new-badge {
 		display: inline-block;
-		padding: 1px 4px;
-		font-size: 0.625rem;
+		margin-left: 8px;
+		padding: 2px 6px;
+		font-size: 0.75rem;
 		font-weight: 700;
-		color: var(--primary);
-		background: var(--secondary);
-		border: 1px solid var(--border);
+		color: #fff;
+		background: var(--primary);
+		border-radius: 4px;
+		vertical-align: middle;
 		text-transform: uppercase;
-		letter-spacing: 0.5px;
-		line-height: 1.2;
+		letter-spacing: 0.05em;
 	}
 
-	.chaos-mail-date {
-		flex-shrink: 0;
-		font-size: 0.75rem;
+	.post-date {
+		font-size: 0.875rem;
 		color: var(--gray);
 		opacity: 0.8;
 		white-space: nowrap;
-		font-family: "Courier New", monospace;
-
-		@media (max-width: 768px) {
-			width: 100%;
-			margin-top: 2px;
-		}
 	}
 
-	.chaos-mail-row-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.chaos-mail-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px;
-		align-items: center;
-	}
-
-	.chaos-mail-tag {
-		display: inline-block;
-		padding: 1px 6px;
-		font-size: 0.6875rem;
-		color: var(--gray);
-		background: var(--gray-bg);
-		@include retro-raised;
-		white-space: nowrap;
-		line-height: 1.4;
-	}
-
-	.chaos-mail-tag-more {
-		display: inline-block;
-		padding: 1px 6px;
-		font-size: 0.6875rem;
-		color: var(--gray);
-		opacity: 0.6;
-		font-family: "Courier New", monospace;
-	}
-
-	.chaos-mail-snippet {
+	.post-snippet {
 		margin: 0;
-		font-size: 0.8125rem;
+		font-size: 1rem;
 		color: var(--gray);
-		opacity: 0.85;
-		line-height: 1.4;
+		line-height: 1.6;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
-
-	.chaos-mail-expand-icon {
-		flex-shrink: 0;
-		margin-top: 2px;
-		color: var(--gray);
-		opacity: 0.6;
-		transition: transform 0.2s ease-out, opacity 0.1s linear;
-	}
-
-	.chaos-mail-row:hover .chaos-mail-expand-icon {
-		opacity: 0.9;
-	}
-
-	// Expanded content (preview pane)
-	.chaos-mail-expanded {
-		overflow: hidden;
-		height: 0;
-		opacity: 0;
-		pointer-events: none;
-
-		&[aria-hidden="false"] {
-			height: fit-content;
-			opacity: 1;
-			pointer-events: auto;
-			padding: 0 12px 12px 12px;
-
-			@media (max-width: 768px) {
-				padding: 0 10px 10px 10px;
-			}
-		}
-	}
-
-	.chaos-mail-expanded-inner {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		background: var(--gray-bg);
-		@include retro-inset;
-		padding: 10px;
-		margin-top: 8px;
-	}
-
-	.chaos-mail-cover {
-		width: 100%;
-		max-width: 500px;
-		overflow: hidden;
-		@include retro-inset;
-
-		img {
-			width: 100%;
-			height: auto;
-			display: block;
-			object-fit: cover;
-		}
-	}
-
-	.chaos-mail-description {
-		margin: 0;
-		font-size: 0.875rem;
-		color: var(--gray);
-		line-height: 1.5;
-	}
-
-	.chaos-mail-preview-header {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		padding: 8px;
-		background: white;
-		@include retro-inset;
-		font-size: 0.75rem;
-		font-family: "Courier New", monospace;
-	}
-
-	.chaos-mail-header-row {
-		display: flex;
-		gap: 8px;
-		line-height: 1.4;
-	}
-
-	.chaos-mail-header-label {
-		font-weight: 700;
-		color: var(--gray);
-		text-transform: uppercase;
-	}
-
-	.chaos-mail-header-value {
-		color: var(--gray);
-		flex: 1;
-	}
-
-	.chaos-mail-expanded-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		padding-top: 4px;
-	}
-
-	.chaos-mail-tags-full {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px;
-	}
-
-	.chaos-mail-meta-row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-		align-items: center;
-		font-size: 0.75rem;
-		color: var(--gray);
-		font-family: "Courier New", monospace;
-	}
-
-	.chaos-mail-meta-item {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		color: var(--gray);
-		opacity: 0.85;
-
-		svg {
-			flex-shrink: 0;
-			color: var(--gray);
-			opacity: 0.7;
-		}
-	}
-
-	.chaos-mail-doc-icon {
-		margin-left: auto;
-		color: var(--gray);
-		opacity: 0.6;
-	}
-
-	.chaos-mail-more-link {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		width: fit-content;
-		padding: 4px 12px;
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: var(--gray);
-		background: var(--gray-bg);
-		@include retro-raised;
-		text-decoration: none;
-		transition: all 0.1s linear;
-		cursor: pointer;
-
-		&:hover {
-			@include retro-inset;
-		}
-
-		&:active {
-			@include retro-inset;
-			padding-top: 5px;
-			padding-left: 13px;
-		}
-
-		&:focus-visible {
-			outline: 1px dashed var(--primary);
-			outline-offset: 2px;
-		}
-
-		svg {
-			width: 10px;
-			height: 10px;
-			transition: transform 0.1s linear;
-		}
-
-		&:hover svg {
-			transform: translateX(1px);
-		}
-	}
 </style>
-
-<script>
-	// Accordion behavior: only one expanded at a time
-	(function initMailAccordion() {
-		const rows = document.querySelectorAll('.chaos-mail-row');
-		const allowMultiple = false; // Set to true to allow multiple expanded
-
-		rows.forEach((row) => {
-			const toggle = row.querySelector('.chaos-mail-row-toggle');
-			const expanded = row.querySelector('.chaos-mail-expanded');
-			const moreLink = row.querySelector('.chaos-mail-more-link');
-			
-			if (!toggle || !expanded) return;
-
-			// Prevent "More" link from toggling the row
-			if (moreLink) {
-				moreLink.addEventListener('click', (e) => {
-					e.stopPropagation();
-				});
-			}
-
-			toggle.addEventListener('click', (e) => {
-				// Don't toggle if clicking the "More" link
-				const target = e.target;
-				if (target && target.closest && target.closest('.chaos-mail-more-link')) {
-					return;
-				}
-
-				const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-
-				if (!allowMultiple && !isExpanded) {
-					// Collapse all other rows
-					rows.forEach((otherRow) => {
-						if (otherRow !== row) {
-							const otherToggle = otherRow.querySelector('.chaos-mail-row-toggle');
-							const otherExpanded = otherRow.querySelector('.chaos-mail-expanded');
-							
-							if (otherToggle && otherExpanded) {
-								otherToggle.setAttribute('aria-expanded', 'false');
-								otherExpanded.setAttribute('aria-hidden', 'true');
-								otherRow.setAttribute('data-expanded', 'false');
-							}
-						}
-					});
-				}
-
-				// Toggle current row
-				const newState = !isExpanded;
-				toggle.setAttribute('aria-expanded', String(newState));
-				expanded.setAttribute('aria-hidden', String(!newState));
-				row.setAttribute('data-expanded', String(newState));
-			});
-
-			// Keyboard support
-			toggle.addEventListener('keydown', (e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault();
-					toggle.click();
-				}
-			});
-		});
-	})();
-</script>

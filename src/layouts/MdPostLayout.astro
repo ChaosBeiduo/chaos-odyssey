@@ -1,100 +1,14 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-const { frontmatter } = Astro.props;
+const { frontmatter, headings } = Astro.props;
 ---
 
 <style lang="scss">
-  .chaos-container{
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-column: 1/-1;
-
-    padding-top: 36px;
-  }
-  .chaos-title{
-    grid-column: 1/-1;
-  }
   .chaos-post{
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-column: 1/-1;
-
-    margin-top: 12px;
-
-    &-sidebar,
-    &-content {
-      grid-row: 1;
-      align-self: start;
-    }
-
-    &-sidebar{
-      display: grid;
-      grid-template-columns: subgrid;
-      grid-column: 1 / 7;
-
-      &-metadata{
-        display: grid;
-        grid-template-columns: subgrid;
-        grid-column: 1/-1;
-
-        >div{
-          display: grid;
-          grid-template-columns: subgrid;
-          grid-column: 1 / -1;
-
-          padding: 12px 0;
-
-          border-bottom: 1px dotted #ddd;
-
-          span{
-            grid-column: span 5;
-
-            &:first-child{
-              grid-column: span 1;
-            }
-          }
-        }
-
-        &-tags{
-          span:last-child{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            
-            @media (max-width: 768px){
-              justify-content: end;
-            }
-          }
-          .tag-item{
-            padding: 3px 6px;
-
-            color: gray;
-            font-size: .9rem;
-
-            border-radius: 3px;
-            border: 1px dotted lightgray;
-            background: #f8f8f8;
-          }
-        }
-      }
-    }
-
-    &-content{
-      display: grid;
-      grid-template-columns: subgrid;
-      grid-column: 8 / 25;
-
-      .chaos-markdown{
-        grid-column: 1/-1;
-      }
-    }
+    margin-top: 36px;
   }
 
   .chaos-table-header{
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-column: 1/-1;
-
     border-bottom: 1px dashed lightgray;
 
     &-label{
@@ -115,6 +29,7 @@ const { frontmatter } = Astro.props;
       grid-column: 1 / -1;
       width: 100%;
       display: block;
+      position: static;
     }
 
     .chaos-post-sidebar-metadata > div {
@@ -129,48 +44,50 @@ const { frontmatter } = Astro.props;
 </style>
 
 <BaseLayout pageTitle={frontmatter.title}>
-    <div class="chaos-container">
-    <h1 class="chaos-title text-4xl">{frontmatter.title}</h1>
-    <div class="chaos-post">
-        <aside class="chaos-post-sidebar">
-            <div class="chaos-table-header">
-                <div class="chaos-table-header-label">
-                    <span>/</span>
-                    Metadata
-                </div>
-            </div>
-
-            <div class="chaos-post-sidebar-metadata">
-                <div>
-                    <span>DATE:</span>
-                    <span>{frontmatter.pubDate.toString().slice(0,10)}</span>
-                </div>
-                <div>
-                    <span>AUTHOR:</span>
-                    <span>Yiwen Zhang</span>
-                </div>
-                <div class="chaos-post-sidebar-metadata-tags">
-                    <span>TAGS:</span>
-                    <span>
-                        {frontmatter.tags.map((tag: string) => (
-                            <span class="tag-item">{tag}</span>
-                        ))}
-                    </span>
-                </div>
-            </div>
-        </aside>
-        <main class="chaos-post-content">
-            <div class="chaos-table-header">
-                <div class="chaos-table-header-label">
-                    <span>/</span>
-                    Article
-                </div>
-            </div>
-
+    <div>
+        <div class="text-center">
+            <p class="text-gray-500">{frontmatter.pubDate.toString().slice(0, 10)}</p>
+            <h1 class="font-light text-4xl">{frontmatter.title}</h1>
+            <p class="text-gray-500">{frontmatter.description}</p>
+        </div>
+        <main class="chaos-post">
             <div class="chaos-markdown">
-                <slot />
+                <slot/>
             </div>
         </main>
     </div>
-    </div>
 </BaseLayout>
+
+<script>
+    function setupScrollSpy() {
+        const observerOptions = {
+            root: null,
+            rootMargin: '-10% 0px -80% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    if (!id) return;
+
+                    document.querySelectorAll('.chaos-post-sidebar-toc li').forEach((li) => {
+                        li.classList.remove('active');
+                    });
+
+                    const activeLink = document.querySelector(`.chaos-post-sidebar-toc a[href="#${id}"]`);
+                    if (activeLink) {
+                        activeLink.parentElement?.classList.add('active');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        const headings = document.querySelectorAll('.chaos-markdown h1, .chaos-markdown h2, .chaos-markdown h3');
+        headings.forEach((h) => observer.observe(h));
+    }
+
+    document.addEventListener('astro:page-load', setupScrollSpy);
+    setupScrollSpy();
+</script>

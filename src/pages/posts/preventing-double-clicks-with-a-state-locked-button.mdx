@@ -2,11 +2,13 @@
 layout: ../../layouts/MdPostLayout.astro
 title: "Preventing Double-Clicks with a State-Locked Button"
 pubDate: 2026.01.09
+description: "How to effectively prevent duplicate form submissions and redundant API calls by encapsulating loading states into a reusable Vue button component, moving beyond simple throttling."
 tags: ["Frontend", "Vue.js", "Hook"]
 ---
 
-My company website has a recurring issue: users often double-click buttons when they don't see an immediate response.   
-This leads to redundant submissions on login and order pages, causing data inconsistency and a poor user experience. It even affects download buttons, where multiple clicks trigger simultaneous downloads, wasting significant server resources.
+Our company website has a recurring issue: when users do not receive immediate feedback after clicking a button, they often click it again.
+This results in duplicate submissions on pages such as login and order forms, leading to data inconsistencies and a degraded user experience.
+The problem also affects download buttons, where repeated clicks can trigger multiple downloads at the same time, unnecessarily consuming server resources.
 
 Although we already have a `throttle` utility, applying it manually across different components is inefficient. It’s even worse once you factor in loading status and UI feedback. To keep the code `DRY`, I decided to move beyond simple utility functions. By leveraging a custom abstraction (in this case, a reusable button component), we can encapsulate locking, loading state, and UI behavior into a single place, solving this problem once and for all.
 
