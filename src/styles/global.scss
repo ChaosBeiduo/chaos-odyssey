@@ -100,16 +100,19 @@ a {
 
     // Links
     a {
+        color: var(--primary);
         display: inline-block;
-        
+
         text-decoration: underline;
         text-decoration-color: var(--border);
         text-underline-offset: 4px;
 
-        transition: all 0.3s ease;
+        transform: skewX(-15deg);
+        transition: transform 0.3s ease;
 
         &:hover {
-            background: var(--border);
+            transform: skewX(0deg);
+            opacity: 0.8;
         }
     }
 
@@ -151,7 +154,7 @@ a {
         background: var(--bg);
         border-radius: 4px;
     }
-    
+
     // Code Blocks (Expressive Code handles most of this, but defaults are good)
     pre {
         margin-top: 1.5rem;
@@ -183,7 +186,7 @@ a {
 
     .figure-container {
         margin: 2rem 0;
-        
+
         img {
             margin: 0; // Reset global img margin inside figure
         }
@@ -199,12 +202,12 @@ a {
         border-radius: 8px;
         overflow-x: auto;
         border: 1px solid var(--gray-border);
-        
+
         td, th {
             padding: 0.75rem 1rem;
             border: 1px solid var(--gray-border);
         }
-        
+
         th {
             background: var(--gray-bg);
             font-weight: 700;
@@ -239,10 +242,10 @@ a {
             }
         }
     }
-    
+
     &-references{
         display: grid;
-        
+
         >div{
             display: flex;
             align-items: start;
