@@ -3,43 +3,32 @@ const { title, description, image, url, technologies } = Astro.props;
 ---
 
 <div class="work-card">
-    <div class="work-card-titlebar">
-        <div class="work-card-titlebar-title">
-            <i class="fa-solid fa-window-maximize"></i>
-            <span>{title}</span>
-        </div>
-        <div class="work-card-titlebar-buttons">
-            <button class="work-card-button" aria-label="Minimize">_</button>
-            <button class="work-card-button" aria-label="Maximize">□</button>
-            <button class="work-card-button" aria-label="Close">×</button>
-        </div>
-    </div>
-    
-    <div class="work-card-toolbar">
-        <div class="work-card-address">
-            <span><i class="fa-solid fa-circle-info"></i></span>
-            <div class="work-card-address-input">
-                {url || 'https://chaosland/work'}
+    <div class="work-card-inner">
+        {image && (
+            <div class="work-card-image">
+                <img src={image} alt={title} loading="lazy" />
             </div>
-        </div>
-    </div>
-
-    <div class="work-card-content">
-        {image && <div class="work-card-image"><img src={image} alt={title} /></div>}
-        <div class="work-card-info">
-            <h3 class="work-card-heading">{title}</h3>
-            <p class="work-card-description">{description}</p>
-            {technologies && (
-                <div class="work-card-tags">
-                    {technologies.map((tech: string) => (
-                        <span class="work-card-tag">{tech}</span>
-                    ))}
+        )}
+        
+        <div class="work-card-content">
+            <div class="work-card-main">
+                <div class="work-card-header">
+                    <h3 class="work-card-title">{title}</h3>
+                    {technologies && (
+                        <div class="work-card-tags">
+                            {technologies.map((tech: string) => (
+                                <span class="work-card-tag">{tech}</span>
+                            ))}
+                        </div>
+                    )}
                 </div>
-            )}
+                <p class="work-card-description">{description}</p>
+            </div>
+
             {url && (
-                <div class="work-card-actions">
-                    <a href={url} target="_blank" rel="noopener noreferrer" class="work-card-link-button">
-                        Visit Site
+                <div class="work-card-footer">
+                    <a href={url} target="_blank" rel="noopener noreferrer" class="work-card-button">
+                        Visit Project <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
             )}
@@ -48,182 +37,140 @@ const { title, description, image, url, technologies } = Astro.props;
 </div>
 
 <style lang="scss">
-    @use '../styles/_mixins.scss' as *;
-
     .work-card {
-        background: var(--gray-bg);
-        @include retro-raised;
-        border-width: 2px;
+        background: white;
+        border: 1px solid var(--gray-border);
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         display: flex;
         flex-direction: column;
-        overflow: hidden;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         &:hover {
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
             transform: translateY(-4px);
-            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
-        }
 
-        &-titlebar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 2px 4px;
-            background: linear-gradient(
-                to bottom,
-                color-mix(in oklch, var(--primary) 10%, white),
-                color-mix(in oklch, var(--primary) 5%, white)
-            );
-            border-bottom: 1px solid color-mix(in oklch, var(--gray) 20%, black);
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--gray);
-            min-height: 20px;
+            .work-card-image img {
+                transform: scale(1.04);
+            }
 
-            &-title {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-
-                svg, i {
-                    font-size: 10px;
-                    color: var(--primary);
+            .work-card-button {
+                background: var(--primary);
+                color: white;
+                
+                i {
+                    transform: translateX(3px);
                 }
             }
-
-            &-buttons {
-                display: flex;
-                gap: 2px;
-            }
         }
 
-        &-button {
-            width: 14px;
-            height: 12px;
-            padding: 0;
-            border: none;
-            background: var(--gray-bg);
-            @include retro-raised;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: var(--gray);
-            line-height: 1;
-
-            &:active {
-                @include retro-inset;
-            }
-        }
-
-        &-toolbar {
-            padding: 4px;
-            background: var(--gray-bg);
-            border-bottom: 1px solid color-mix(in oklch, var(--gray-border) 80%, black);
-        }
-
-        &-address {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.65rem;
-            color: var(--gray);
-
-            &-input {
-                flex: 1;
-                background: white;
-                @include retro-inset;
-                padding: 1px 4px;
-                font-family: "Courier New", monospace;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-
-        &-content {
-            padding: 12px;
-            flex-grow: 1;
+        &-inner {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            height: 100%;
         }
 
         &-image {
-            @include retro-inset;
+            width: 100%;
             aspect-ratio: 16 / 9;
             overflow: hidden;
-            background: #eee;
+            background: var(--gray-bg);
+            border-bottom: 1px solid var(--gray-border);
 
             img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
             }
         }
 
-        &-info {
+        &-content {
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            flex-grow: 1;
+            gap: 20px;
         }
 
-        &-heading {
-            margin: 0;
-            font-size: 1rem;
-            color: var(--primary);
+        &-main {
+            flex-grow: 1;
         }
 
-        &-description {
-            margin: 0;
-            font-size: 0.875rem;
-            color: var(--gray);
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        &-header {
+            margin-bottom: 12px;
+        }
+
+        &-title {
+            margin: 0 0 8px 0;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #111;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
         }
 
         &-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 8px;
         }
 
         &-tag {
-            font-size: 0.625rem;
-            padding: 2px 6px;
-            background: var(--secondary);
-            color: var(--primary);
-            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--gray-bg);
+            padding: 2px 8px;
+            border-radius: 2px;
         }
 
-        &-actions {
+        &-description {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        &-footer {
             margin-top: auto;
             padding-top: 8px;
         }
 
-        &-link-button {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--gray-bg);
-            @include retro-raised;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--gray);
-            text-align: center;
+        &-work-link {
+          text-decoration: none;
+        }
 
-            &:active {
-                @include retro-inset;
-            }
+        &-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            transition: all 0.3s ease;
 
-            &:hover {
-                background: color-mix(in oklch, var(--gray-bg) 90%, var(--primary));
+            i {
+                transition: transform 0.3s ease;
             }
+        }
+    }
+
+    @media (max-width: 640px) {
+        .work-card-content {
+            padding: 20px;
+        }
+        
+        .work-card-title {
+            font-size: 1.2rem;
         }
     }
 </style>
