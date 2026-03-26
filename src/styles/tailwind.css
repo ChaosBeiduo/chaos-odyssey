@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+@theme {
+  --font-caveat: "Caveat", cursive;
+  --font-vt323: "VT323", monospace;
+}
+
 @layer base {
     h1 {
         @apply text-2xl font-bold my-6;

@@ -6,11 +6,6 @@
     font-style: normal;
 }
 
-*{
-    font-family: 'Hanken Grotesk', 'Helvetica', sans-serif;
-    box-sizing: border-box;
-}
-
 :root {
     --primary: #2776DB;
     --bg: rgba(39, 118, 219, 0.08);   /* 稍微调低，增加背景清透度 */
@@ -28,7 +23,12 @@ html {
     background-color: var(--secondary-bg);
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
+    font-family: 'Hanken Grotesk', 'Helvetica', sans-serif;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
