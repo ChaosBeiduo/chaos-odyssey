@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WorkCard from "../components/WorkCard.astro";
+import { getCollection } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 
 const websiteWorks = [
     {
@@ -12,18 +14,33 @@ const websiteWorks = [
     },
 ];
 
-const generateGallery = () => {
-    const modules = import.meta.glob('../../public/images/Gallery/*.{jpeg,jpg,png,webp}', { eager: true });
+const generateGallery = async () => {
+    console.log(">>> [Gallery Debug] Starting gallery generation...");
+    // 1. 扫描 assets 目录
+    const modules = import.meta.glob<{ default: ImageMetadata }>('/src/assets/gallery/**/*.{jpeg,jpg,png,webp,JPEG,JPG}', { eager: true });
+    console.log(`>>> [Gallery Debug] Found ${Object.keys(modules).length} image modules.`);
     
-    const rawPhotos = Object.keys(modules).map(path => {
-        const fullFileName = path.split('/').pop().split('.')[0];
-        const parts = fullFileName.split('_');
-        const datePart = parts[0] || '';
-        const titlePart = parts[1] || 'Untitled';
+    // 2. 获取元数据覆盖
+    const metadataEntries = await getCollection('gallery-metadata');
+    console.log(`>>> [Gallery Debug] Metadata entries found: ${metadataEntries.length}`);
+
+    const rawPhotos = Object.entries(modules).map(([path, module]) => {
+        // 提取 ID: "2026-02-17/01"
+        const id = path
+            .replace('/src/assets/gallery/', '')
+            .replace(/\.[^/.]+$/, '');
+
+        const [datePart] = id.split('/');
+        // 直接从 collection 数组中匹配对应 ID 的项
+        const photoMetadata = metadataEntries.find(m => m.id === id)?.data || {};
+
+        console.log(`>>> [Gallery Debug] Processing ID: ${id}, hasOverride: ${!!photoMetadata.title}`);
+
         return {
-            src: path.replace('./public', ''),
+            src: module.default.src,
             date: datePart.replace(/-/g, '.'),
-            desc: titlePart.charAt(0).toUpperCase() + titlePart.slice(1)
+            title: photoMetadata.title || 'Untitled',
+            description: photoMetadata.description || ''
         };
     });
 
@@ -40,10 +57,11 @@ const generateGallery = () => {
             cover: photos[0],
             count: photos.length
         }))
-        .sort((a, b) => new Date(b.date.replace(/\./g, '-')).getTime() - new Date(a.date.replace(/\./g, '-')).getTime());
+        // 按 ID (日期) 倒序排列
+        .sort((a, b) => b.date.localeCompare(a.date));
 };
 
-const photoGroups = generateGallery();
+const photoGroups = await generateGallery();
 ---
 
 <BaseLayout pageTitle={'Work'}>
@@ -159,8 +177,13 @@ const photoGroups = generateGallery();
             // Date above photo
             reDateHeader.textContent = `${photo.date}`;
             
-            // Text below photo
-            const fullText = `"${photo.desc}"... A fragment of memory preserved in time.`;
+            // Text below photo: Title and Description combined for impact
+            const title = photo.title || 'Untitled';
+            const desc = photo.description;
+            const fullText = desc 
+                ? `"${desc}`
+                : `"${title}"... A title. Surely that is enough.`;
+            
             typeWriter(fullText);
             
             reCounter.textContent = `${currentIndex + 1} / ${currentPhotos.length}`;
