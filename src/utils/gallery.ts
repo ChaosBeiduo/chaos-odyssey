@@ -40,7 +40,7 @@ export async function getPhotos(): Promise<Photo[]> {
       date,
       slug: id.replace(/\//g, '-'), // "2026-03-20-01"
       asset: module.default,
-      title: photoOverride.title || 'Untitled',
+      title: photoOverride.title,
       description: photoOverride.description,
       tags: photoOverride.tags,
       location: photoOverride.location,
