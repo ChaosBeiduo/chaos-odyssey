@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import WorkCard from "../components/WorkCard.astro";
 import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 const websiteWorks = [
@@ -24,7 +25,7 @@ const generateGallery = async () => {
     const metadataEntries = await getCollection('gallery-metadata');
     console.log(`>>> [Gallery Debug] Metadata entries found: ${metadataEntries.length}`);
 
-    const rawPhotos = Object.entries(modules).map(([path, module]) => {
+    const rawPhotos = await Promise.all(Object.entries(modules).map(async ([path, module]) => {
         // 提取 ID: "2026-02-17/01"
         const id = path
             .replace('/src/assets/gallery/', '')
@@ -36,13 +37,19 @@ const generateGallery = async () => {
 
         console.log(`>>> [Gallery Debug] Processing ID: ${id}, hasOverride: ${!!photoMetadata.title}`);
 
+        // 为每张照片生成 thumb 和 large 版本
+        const thumb = await getImage({ src: module.default, width: 400, format: 'webp' });
+        const large = await getImage({ src: module.default, width: 1200, format: 'webp' });
+
         return {
             src: module.default.src,
+            thumb: thumb.src,
+            large: large.src,
             date: datePart.replace(/-/g, '.'),
             title: photoMetadata.title,
             description: photoMetadata.description || ''
         };
-    });
+    }));
 
     const groups: Record<string, any[]> = {};
     rawPhotos.forEach(photo => {
@@ -96,7 +103,7 @@ const photoGroups = await generateGallery();
                             {group.count > 1 && (
                                 <div class="absolute inset-0 bg-white border border-[#eee] -z-10 translate-x-1 translate-y-1 rotate-2 shadow-[2px_2px_5px_rgba(0,0,0,0.05)] after:content-[''] after:absolute after:inset-0 after:bg-white after:border after:border-[#eee] after:translate-x-1 after:translate-y-1 after:-rotate-4"></div>
                             )}
-                            <img src={group.cover.src} alt={group.date} loading="lazy" class="w-full aspect-square object-cover border border-[#eee] mb-3 bg-[#f0f0f0]" />
+                            <img src={group.cover.thumb} alt={group.date} loading="lazy" class="w-full aspect-square object-cover border border-[#eee] mb-3 bg-[#f0f0f0]" />
                             {group.count > 1 && <div class="absolute top-4 right-4 bg-black/70 text-white px-2 py-0.5 font-vt323 text-base rounded-[2px] z-[2]">×{group.count}</div>}
                             <div class="px-1 grid text-end">
                                 <span class="font-caveat text-[1.6rem] text-[#333] leading-none">{group.date}</span>
@@ -120,7 +127,7 @@ const photoGroups = await generateGallery();
             <div class="flex items-center gap-[15px] w-full">
                 <button class="bg-none border-none text-white text-[1.5rem] md:text-[2rem] cursor-pointer transition-all duration-200 p-2.5 opacity-30 hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" id="re-prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="flex-1 bg-black shadow-[0_0_40px_rgba(0,0,0,0.6)] flex justify-center items-center border border-[#333] relative overflow-hidden group">
-                    <img id="modal-img" src="" alt="Examine" class="max-w-full max-h-[60vh] object-contain transition-opacity duration-300" />
+                    <img id="modal-img" src="" alt="Examine" loading="lazy" class="max-w-full max-h-[60vh] object-contain transition-opacity duration-300" />
                     
                     <!-- Cinematic Overlay -->
                     <div class="absolute bottom-0 left-0 w-full">
@@ -173,7 +180,7 @@ const photoGroups = await generateGallery();
         modalImg.style.opacity = '0';
         
         setTimeout(() => {
-            modalImg.src = photo.src;
+            modalImg.src = photo.large;
             modalImg.style.opacity = '1';
             
             // Date above photo
