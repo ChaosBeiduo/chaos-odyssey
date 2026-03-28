@@ -135,9 +135,9 @@ const photoGroups = await generateGallery();
             
             <div class="flex items-center gap-[15px] w-full">
                 <button class="bg-none border-none text-white text-[1.5rem] md:text-[2rem] cursor-pointer transition-all duration-200 p-2.5 opacity-30 hover:opacity-100 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" id="re-prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="flex-1 bg-black shadow-[0_0_40px_rgba(0,0,0,0.6)] flex justify-center items-center border border-[#333] relative overflow-hidden group">
-                    <img id="modal-img" src="" alt="Examine" loading="lazy" class="max-w-full max-h-[60vh] object-contain transition-opacity duration-300" />
-                    
+                <div class="flex-1 bg-black shadow-[0_0_40px_rgba(0,0,0,0.6)] flex justify-center items-center border border-[#333] relative overflow-hidden group aspect-[3/2] w-full">
+                    <img id="modal-img" src="" alt="Examine" loading="lazy" class="max-w-full max-h-full object-contain transition-opacity duration-500 opacity-0" />
+
                     <!-- Cinematic Overlay -->
                     <div class="absolute bottom-0 left-0 w-full">
                         <div id="typewriter-text" class="m-auto mb-2 px-2 w-fit text-white tracking-wider text-xl text-center [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000] min-h-[3.2rem] flex items-center justify-center"></div>
@@ -186,32 +186,33 @@ const photoGroups = await generateGallery();
         if (!modalImg || !reCounter || !reDateHeader || currentPhotos.length === 0) return;
         
         const photo = currentPhotos[currentIndex];
+        
+        // 1. 先启动淡出动画到黑色背景
         modalImg.style.opacity = '0';
         
+        // 2. 等待淡出动画进行一半后切换 src，这样过渡更自然
         setTimeout(() => {
-            modalImg.src = photo.large;
-            modalImg.style.opacity = '1';
+            modalImg.src = '';
             
-            // Date above photo
-            reDateHeader.textContent = `${photo.date}`;
-            
-            // Text below photo: Title and Description combined for impact
-            const title = photo.title;
-            const desc = photo.description;
+            // 预设加载回调
+            modalImg.onload = () => {
+                // 确保在设置透明度前，浏览器已经知道它是 0 了
+                requestAnimationFrame(() => {
+                    modalImg.style.opacity = '1';
+                });
+            };
 
-            const fullText = desc
-                ? desc
-                : photo.title
-                    ? `"${title}"... Surely that is enough.`
-                    : `Nothing was entered for this photo. Perhaps none was needed.`;
+            modalImg.src = photo.large;
             
+            // 更新文字信息
+            reDateHeader.textContent = `${photo.date}`;
+            const fullText = photo.description || (photo.title ? `"${photo.title}"... Surely that is enough.` : `Nothing was entered for this photo.`);
             typeWriter(fullText);
             
             reCounter.textContent = `${currentIndex + 1} / ${currentPhotos.length}`;
-            
             if (prevBtn) prevBtn.style.visibility = currentPhotos.length > 1 ? 'visible' : 'hidden';
             if (nextBtn) nextBtn.style.visibility = currentPhotos.length > 1 ? 'visible' : 'hidden';
-        }, 150);
+        }, 200); 
     }
 
     triggers.forEach(trigger => {
@@ -221,7 +222,15 @@ const photoGroups = await generateGallery();
                 currentPhotos = JSON.parse(photosData);
                 currentIndex = 0;
                 modal.classList.add('active');
-                updateModalContent();
+                
+                // 打开弹窗时，先确保图片是空的且透明的
+                if (modalImg) {
+                    modalImg.src = '';
+                    modalImg.style.opacity = '0';
+                }
+                
+                // 稍微延迟一点点再加载内容，确保弹窗打开动画不卡顿
+                setTimeout(updateModalContent, 50);
             }
         });
     });
@@ -246,6 +255,12 @@ const photoGroups = await generateGallery();
             modal.classList.remove('active');
             clearInterval(typeInterval);
             currentPhotos = [];
+            // 关闭时彻底清空图片状态
+            if (modalImg) {
+                modalImg.src = '';
+                modalImg.style.opacity = '0';
+                modalImg.onload = null;
+            }
         }
     }
 
