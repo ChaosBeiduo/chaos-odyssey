@@ -11,6 +11,7 @@ const websiteWorks = [
         description: "A 3D lottery drawing application built with Astro and Three.js. Features a beautiful \"sphere of names\" that spins and selects winners with smooth animations.",
         image: "/images/Projects/pachinko-sphere.png",
         url: "https://pachinko-sphere.vercel.app/",
+        repoUrl: "https://github.com/ChaosBeiduo/pachinko-sphere",
         technologies: ["Astro", "TypeScript", "Three.js"]
     },
     {
@@ -103,7 +104,8 @@ const photoGroups = await generateGallery();
             <div class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-y-4 py-5 justify-items-center">
                 {photoGroups.map((group, index) => (
                     <div 
-                        class="photo-trigger cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:rotate-0 hover:scale-[1.08] hover:-translate-y-2.5 hover:z-10" 
+                        class="photo-trigger cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:rotate-0 hover:scale-[1.08] hover:-translate-y-2.5 hover:z-10"
+                        style={`transform: rotate(${(index % 3 - 1) * (Math.random() * 5 + 2)}deg);`}
                         data-photos={JSON.stringify(group.photos)}
                     >
                         <div class="bg-[#fdfdfd] p-2 pb-4 shadow-[0_10px_20px_rgba(0,0,0,0.1)] w-[260px] relative">

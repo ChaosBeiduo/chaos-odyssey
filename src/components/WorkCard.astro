@@ -1,5 +1,5 @@
 ---
-const { title, description, image, url, technologies } = Astro.props;
+const { title, description, image, url, repoUrl, technologies } = Astro.props;
 ---
 
 <div class="work-card">
@@ -13,7 +13,14 @@ const { title, description, image, url, technologies } = Astro.props;
         <div class="work-card-content">
             <div class="work-card-main">
                 <div class="work-card-header">
-                    <h3 class="work-card-title">{title}</h3>
+                    <div class="work-card-title-row flex">
+                        <h3 class="work-card-title">{title}</h3>
+                        {repoUrl && (
+                            <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="work-card-repo-link" title="View Source Code">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                        )}
+                    </div>
                     {technologies && (
                         <div class="work-card-tags">
                             {technologies.map((tech: string) => (
@@ -28,7 +35,7 @@ const { title, description, image, url, technologies } = Astro.props;
             {url && (
                 <div class="work-card-footer">
                     <a href={url} target="_blank" rel="noopener noreferrer" class="work-card-button">
-                        Visit Project <i class="fa-solid fa-arrow-right"></i>
+                        Visit DEMO<i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
             )}
@@ -96,13 +103,34 @@ const { title, description, image, url, technologies } = Astro.props;
             margin-bottom: 12px;
         }
 
+        &-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
         &-title {
-            margin: 0 0 8px 0;
+            margin: 0;
             font-size: 1.35rem;
             font-weight: 700;
             color: #111;
             letter-spacing: -0.01em;
             line-height: 1.2;
+        }
+
+        &-repo-link {
+            font-size: 1.5rem;
+            color: var(--gray);
+            transition: all 0.3s ease;
+            line-height: 1;
+            margin-top: 2px;
+
+            &:hover {
+                color: var(--primary);
+                transform: translateY(-2px);
+            }
         }
 
         &-tags {
