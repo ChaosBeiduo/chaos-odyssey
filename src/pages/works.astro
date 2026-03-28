@@ -254,13 +254,16 @@ const photoGroups = await generateGallery();
         if (modal) {
             modal.classList.remove('active');
             clearInterval(typeInterval);
-            currentPhotos = [];
-            // 关闭时彻底清空图片状态
-            if (modalImg) {
-                modalImg.src = '';
-                modalImg.style.opacity = '0';
-                modalImg.onload = null;
-            }
+            
+            // 关键：等待弹窗关闭动画（300ms）结束后再彻底清空状态
+            setTimeout(() => {
+                currentPhotos = [];
+                if (modalImg) {
+                    modalImg.src = '';
+                    modalImg.style.opacity = '0';
+                    modalImg.onload = null;
+                }
+            }, 300);
         }
     }
 
