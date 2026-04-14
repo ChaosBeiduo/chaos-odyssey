@@ -1,8 +1,10 @@
 @import 'tailwindcss';
 
-@theme {
+@theme inline {
   --font-caveat: "Caveat", cursive;
   --font-vt323: "VT323", monospace;
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
 }
 
 @layer base {
